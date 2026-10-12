@@ -24,7 +24,9 @@ def main():
         ("src.coleta.06_prodes", "06 — Desmatamento Anual PRODES Amazônia"),
         ("src.coleta.07_renda", "07 — Renda Municipal per Capita (Censo 2022 SIDRA)"),
         ("src.coleta.08_risco_fogo", "08 — INPE Risco de Fogo Mensal"),
-        ("src.coleta.09_tabela_final", "09 — Montagem da Tabela Final Integrada APHIM")
+        ("src.coleta.09_tabela_final", "09 — Montagem da Tabela Final Integrada APHIM"),
+        ("src.processamento.01_atributos_alvo", "Processamento 01 — Engenharia de Atributos, Alvo e Divisão Temporal"),
+        ("src.processamento.02_baselines", "Processamento 02 — Baselines de Priorização e Avaliação Comparativa")
     ]
     
     for mod, desc in scripts:
@@ -34,8 +36,9 @@ def main():
             sys.exit(1)
             
     print("\n" + "=" * 70)
-    print(" PIPELINE COMPLETO APHIM EXECUTADO COM SUCESSO (ETAPAS 01 A 09)!")
-    print(" BASE FINAL CONSOLIDADA: data/processed/aphim_base_municipio_mes.parquet")
+    print(" PIPELINE COMPLETO APHIM EXECUTADO COM SUCESSO!")
+    print(" BASE DE MODELAGEM: data/processed/aphim_modelagem.parquet")
+    print(" RESULTADOS BASELINES: data/processed/resultados/baselines_resumo.csv")
     print("=" * 70)
 
 if __name__ == "__main__":
