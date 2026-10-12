@@ -1,0 +1,64 @@
+uf: 15
+uf_sigla: "PA"
+periodo:
+  data_inicio: "2019-01-01"
+  data_fim: "2025-12-31"
+  ano_inicio: 2019
+  ano_fim: 2025
+  ano_inicio_historico: 2018
+
+caminhos:
+  raw: "data/raw"
+  interim: "data/interim"
+  processed: "data/processed"
+  logs: "logs"
+
+firms:
+  fonte_principal: "VIIRS_SNPP_SP"
+  fonte_nrt: "VIIRS_SNPP_NRT"
+  day_range_max: 5
+  # Bounding box do Pará com margem: [West, South, East, North]
+  bbox: [-59.5, -10.0, -45.5, 3.0]
+  filtros:
+    descartar_confidence_low: true
+    filtrar_tipo_vegetacao: true
+
+projecao_area: 5880 # EPSG:5880 (SIRGAS 2000 / Brazil Polyconic)
+
+era5:
+  asset: "ECMWF/ERA5_LAND/MONTHLY_AGGR"
+  catalog_url: "https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_LAND_MONTHLY_AGGR"
+  scale: 1000 # Escala em metros para evitar nulos em municípios pequenos
+  periodo_principal:
+    ano_inicio: 2018
+    ano_fim: 2025
+  periodo_normal:
+    ano_inicio: 1991
+    ano_fim: 2020
+
+mapbiomas:
+  asset: "projects/mapbiomas-public/assets/brazil/lulc/v1"
+  catalog_url: "https://developers.google.com/earth-engine/datasets/catalog/projects_mapbiomas-public_assets_brazil_lulc_v1"
+  collection_id: 10
+  version: "v1"
+  ano_inicio: 2018
+  ano_fim: 2024
+  classes:
+    pct_floresta: [3, 5, 6, 49]
+    pct_savana: [4]
+    pct_campo_natural: [11, 12, 29, 32, 50]
+    pct_pastagem: [15]
+    pct_agricultura: [18, 19, 20, 35, 36, 39, 40, 41, 46, 47, 48, 62]
+    pct_mosaico: [21]
+    pct_silvicultura: [9]
+    pct_urbano: [24]
+    pct_mineracao: [30]
+    pct_nao_vegetado_outros: [23, 25]
+    pct_agua: [26, 31, 33]
+
+prodes:
+  wfs_url: "https://terrabrasilis.dpi.inpe.br/geoserver/ows"
+  layer_name: "prodes-legal-amz:yearly_deforestation"
+  ano_inicio: 2018
+  ano_fim: 2025
+  uf_sigla: "PA"

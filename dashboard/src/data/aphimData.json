@@ -1,0 +1,3603 @@
+{
+  "auditoria_resumo": {
+    "total_firms": 1695702,
+    "total_inpe": 249210,
+    "razao_media": 6.8,
+    "pearson_mensal": 0.9822,
+    "spearman_mensal": 0.9898,
+    "mes_pico": "2024-09",
+    "pico_firms": 157829,
+    "pico_inpe": 17434,
+    "janelas_5dias": 512,
+    "cobertura_temporal_pct": 100.0,
+    "percentual_retido_funil": 60.48,
+    "municipios_total": 144,
+    "meses_total": 84,
+    "linhas_painel": 12096,
+    "area_total_km2": 1247753.91
+  },
+  "clima_resumo": {
+    "linhas_serie_principal": 13824,
+    "periodo_principal": "2018-01 a 2025-12 (96 meses)",
+    "linhas_normal": 1728,
+    "periodo_normal": "1991 a 2020 (30 anos)",
+    "correlacao_chuva_focos": -0.5934,
+    "trimestre_chuvoso_mm": 382.0,
+    "trimestre_seco_mm": 39.3,
+    "valores_fora_faixa": 5
+  },
+  "mapbiomas_resumo": {
+    "linhas": 1008,
+    "periodo": "2018 a 2024 (7 anos)",
+    "floresta_2018_pct": 77.01,
+    "floresta_2024_pct": 74.28,
+    "pastagem_2018_pct": 14.75,
+    "pastagem_2024_pct": 17.39,
+    "top_pastagem_2024": "Eldorado do Carajás (89.8%)",
+    "top_floresta_2024": "Faro (97.2%)"
+  },
+  "prodes_resumo": {
+    "linhas": 1152,
+    "periodo": "2018 a 2025 (8 anos)",
+    "desmat_acumulado_km2": 28416.7,
+    "top_municipios": [
+      "Altamira (3.809 km²)",
+      "São Félix do Xingu (3.176 km²)",
+      "Novo Progresso (1.658 km²)"
+    ]
+  },
+  "renda_resumo": {
+    "linhas": 144,
+    "fonte": "IBGE Censo 2022 SIDRA Tabela 10295 V13534",
+    "mediana_pa_brl": 509.08,
+    "min_pa_brl": 233.33,
+    "min_mun": "Bagre - PA",
+    "max_pa_brl": 1000.0,
+    "max_mun": "Novo Progresso - PA"
+  },
+  "risco_fogo_resumo": {
+    "linhas": 12096,
+    "periodo": "2019-01 a 2025-12 (84 meses)",
+    "meses_ausentes": 0,
+    "mes_pico": "Setembro (0.5450)",
+    "spearman_corr_focos": 0.6803
+  },
+  "tabela_final_resumo": {
+    "linhas": 12096,
+    "colunas": 44,
+    "nulos_totais": 0,
+    "total_focos": 1695702,
+    "defasagem_mapbiomas": "t-1 estrita (100%)",
+    "defasagem_prodes": "t-1 estrita (100%)"
+  },
+  "funil": [
+    {
+      "etapa": "0. Total Bruto Baixado",
+      "focos": 2803543,
+      "descartados": 0,
+      "pct_retida": 100.0,
+      "descricao": "Bounding box ampliada do Pará (512 janelas consecutivas)"
+    },
+    {
+      "etapa": "1. Junção Espacial (Pará)",
+      "focos": 1806334,
+      "descartados": 997209,
+      "pct_retida": 64.43,
+      "descricao": "Pontos estritamente contidos nos 144 municípios do Pará"
+    },
+    {
+      "etapa": "2. Tipo de Foco (Vegetação)",
+      "focos": 1796753,
+      "descartados": 9581,
+      "pct_retida": 64.09,
+      "descricao": "type == 0 (vegetação presumida, descartados industriais/flaring)"
+    },
+    {
+      "etapa": "3. Confiabilidade (conf != 'l')",
+      "focos": 1695702,
+      "descartados": 101051,
+      "pct_retida": 60.48,
+      "descricao": "Exclusão de focos com nível de confiança 'low' (baixa)"
+    }
+  ],
+  "totais_anuais": [
+    {
+      "ano": 2019,
+      "focos_firms": 203654,
+      "focos_inpe": 30160,
+      "razao": 6.75
+    },
+    {
+      "ano": 2020,
+      "focos_firms": 281008,
+      "focos_inpe": 38605,
+      "razao": 7.28
+    },
+    {
+      "ano": 2021,
+      "focos_firms": 149051,
+      "focos_inpe": 22874,
+      "razao": 6.52
+    },
+    {
+      "ano": 2022,
+      "focos_firms": 280260,
+      "focos_inpe": 41420,
+      "razao": 6.77
+    },
+    {
+      "ano": 2023,
+      "focos_firms": 289462,
+      "focos_inpe": 41715,
+      "razao": 6.94
+    },
+    {
+      "ano": 2024,
+      "focos_firms": 414486,
+      "focos_inpe": 56069,
+      "razao": 7.39
+    },
+    {
+      "ano": 2025,
+      "focos_firms": 77781,
+      "focos_inpe": 18367,
+      "razao": 4.23
+    }
+  ],
+  "serie_mensal": [
+    {
+      "mes": "2019-01",
+      "focos_inpe": 353,
+      "focos_firms": 1990,
+      "ano": 2019,
+      "razao_firms_inpe": 5.6374
+    },
+    {
+      "mes": "2019-02",
+      "focos_inpe": 80,
+      "focos_firms": 294,
+      "ano": 2019,
+      "razao_firms_inpe": 3.675
+    },
+    {
+      "mes": "2019-03",
+      "focos_inpe": 46,
+      "focos_firms": 159,
+      "ano": 2019,
+      "razao_firms_inpe": 3.4565
+    },
+    {
+      "mes": "2019-04",
+      "focos_inpe": 38,
+      "focos_firms": 150,
+      "ano": 2019,
+      "razao_firms_inpe": 3.9474
+    },
+    {
+      "mes": "2019-05",
+      "focos_inpe": 80,
+      "focos_firms": 528,
+      "ano": 2019,
+      "razao_firms_inpe": 6.6
+    },
+    {
+      "mes": "2019-06",
+      "focos_inpe": 315,
+      "focos_firms": 2160,
+      "ano": 2019,
+      "razao_firms_inpe": 6.8571
+    },
+    {
+      "mes": "2019-07",
+      "focos_inpe": 1443,
+      "focos_firms": 9119,
+      "ano": 2019,
+      "razao_firms_inpe": 6.3195
+    },
+    {
+      "mes": "2019-08",
+      "focos_inpe": 10185,
+      "focos_firms": 69358,
+      "ano": 2019,
+      "razao_firms_inpe": 6.8098
+    },
+    {
+      "mes": "2019-09",
+      "focos_inpe": 4618,
+      "focos_firms": 37802,
+      "ano": 2019,
+      "razao_firms_inpe": 8.1858
+    },
+    {
+      "mes": "2019-10",
+      "focos_inpe": 3870,
+      "focos_firms": 27640,
+      "ano": 2019,
+      "razao_firms_inpe": 7.1421
+    },
+    {
+      "mes": "2019-11",
+      "focos_inpe": 7387,
+      "focos_firms": 41532,
+      "ano": 2019,
+      "razao_firms_inpe": 5.6223
+    },
+    {
+      "mes": "2019-12",
+      "focos_inpe": 1745,
+      "focos_firms": 12922,
+      "ano": 2019,
+      "razao_firms_inpe": 7.4052
+    },
+    {
+      "mes": "2020-01",
+      "focos_inpe": 225,
+      "focos_firms": 1022,
+      "ano": 2020,
+      "razao_firms_inpe": 4.5422
+    },
+    {
+      "mes": "2020-02",
+      "focos_inpe": 64,
+      "focos_firms": 304,
+      "ano": 2020,
+      "razao_firms_inpe": 4.75
+    },
+    {
+      "mes": "2020-03",
+      "focos_inpe": 63,
+      "focos_firms": 210,
+      "ano": 2020,
+      "razao_firms_inpe": 3.3333
+    },
+    {
+      "mes": "2020-04",
+      "focos_inpe": 38,
+      "focos_firms": 124,
+      "ano": 2020,
+      "razao_firms_inpe": 3.2632
+    },
+    {
+      "mes": "2020-05",
+      "focos_inpe": 88,
+      "focos_firms": 586,
+      "ano": 2020,
+      "razao_firms_inpe": 6.6591
+    },
+    {
+      "mes": "2020-06",
+      "focos_inpe": 491,
+      "focos_firms": 2659,
+      "ano": 2020,
+      "razao_firms_inpe": 5.4155
+    },
+    {
+      "mes": "2020-07",
+      "focos_inpe": 2687,
+      "focos_firms": 15017,
+      "ano": 2020,
+      "razao_firms_inpe": 5.5888
+    },
+    {
+      "mes": "2020-08",
+      "focos_inpe": 10865,
+      "focos_firms": 76509,
+      "ano": 2020,
+      "razao_firms_inpe": 7.0418
+    },
+    {
+      "mes": "2020-09",
+      "focos_inpe": 10876,
+      "focos_firms": 96455,
+      "ano": 2020,
+      "razao_firms_inpe": 8.8686
+    },
+    {
+      "mes": "2020-10",
+      "focos_inpe": 8054,
+      "focos_firms": 59823,
+      "ano": 2020,
+      "razao_firms_inpe": 7.4277
+    },
+    {
+      "mes": "2020-11",
+      "focos_inpe": 2970,
+      "focos_firms": 14974,
+      "ano": 2020,
+      "razao_firms_inpe": 5.0418
+    },
+    {
+      "mes": "2020-12",
+      "focos_inpe": 2184,
+      "focos_firms": 13325,
+      "ano": 2020,
+      "razao_firms_inpe": 6.1012
+    },
+    {
+      "mes": "2021-01",
+      "focos_inpe": 248,
+      "focos_firms": 1410,
+      "ano": 2021,
+      "razao_firms_inpe": 5.6855
+    },
+    {
+      "mes": "2021-02",
+      "focos_inpe": 272,
+      "focos_firms": 1412,
+      "ano": 2021,
+      "razao_firms_inpe": 5.1912
+    },
+    {
+      "mes": "2021-03",
+      "focos_inpe": 34,
+      "focos_firms": 139,
+      "ano": 2021,
+      "razao_firms_inpe": 4.0882
+    },
+    {
+      "mes": "2021-04",
+      "focos_inpe": 55,
+      "focos_firms": 328,
+      "ano": 2021,
+      "razao_firms_inpe": 5.9636
+    },
+    {
+      "mes": "2021-05",
+      "focos_inpe": 190,
+      "focos_firms": 1068,
+      "ano": 2021,
+      "razao_firms_inpe": 5.6211
+    },
+    {
+      "mes": "2021-06",
+      "focos_inpe": 424,
+      "focos_firms": 2534,
+      "ano": 2021,
+      "razao_firms_inpe": 5.9764
+    },
+    {
+      "mes": "2021-07",
+      "focos_inpe": 1372,
+      "focos_firms": 8456,
+      "ano": 2021,
+      "razao_firms_inpe": 6.1633
+    },
+    {
+      "mes": "2021-08",
+      "focos_inpe": 7853,
+      "focos_firms": 56061,
+      "ano": 2021,
+      "razao_firms_inpe": 7.1388
+    },
+    {
+      "mes": "2021-09",
+      "focos_inpe": 3827,
+      "focos_firms": 24747,
+      "ano": 2021,
+      "razao_firms_inpe": 6.4664
+    },
+    {
+      "mes": "2021-10",
+      "focos_inpe": 4290,
+      "focos_firms": 29065,
+      "ano": 2021,
+      "razao_firms_inpe": 6.7751
+    },
+    {
+      "mes": "2021-11",
+      "focos_inpe": 3660,
+      "focos_firms": 19834,
+      "ano": 2021,
+      "razao_firms_inpe": 5.4191
+    },
+    {
+      "mes": "2021-12",
+      "focos_inpe": 649,
+      "focos_firms": 3997,
+      "ano": 2021,
+      "razao_firms_inpe": 6.1587
+    },
+    {
+      "mes": "2022-01",
+      "focos_inpe": 202,
+      "focos_firms": 1220,
+      "ano": 2022,
+      "razao_firms_inpe": 6.0396
+    },
+    {
+      "mes": "2022-02",
+      "focos_inpe": 70,
+      "focos_firms": 417,
+      "ano": 2022,
+      "razao_firms_inpe": 5.9571
+    },
+    {
+      "mes": "2022-03",
+      "focos_inpe": 34,
+      "focos_firms": 134,
+      "ano": 2022,
+      "razao_firms_inpe": 3.9412
+    },
+    {
+      "mes": "2022-04",
+      "focos_inpe": 37,
+      "focos_firms": 235,
+      "ano": 2022,
+      "razao_firms_inpe": 6.3514
+    },
+    {
+      "mes": "2022-05",
+      "focos_inpe": 225,
+      "focos_firms": 1262,
+      "ano": 2022,
+      "razao_firms_inpe": 5.6089
+    },
+    {
+      "mes": "2022-06",
+      "focos_inpe": 556,
+      "focos_firms": 3185,
+      "ano": 2022,
+      "razao_firms_inpe": 5.7284
+    },
+    {
+      "mes": "2022-07",
+      "focos_inpe": 1681,
+      "focos_firms": 7253,
+      "ano": 2022,
+      "razao_firms_inpe": 4.3147
+    },
+    {
+      "mes": "2022-08",
+      "focos_inpe": 12472,
+      "focos_firms": 75793,
+      "ano": 2022,
+      "razao_firms_inpe": 6.0771
+    },
+    {
+      "mes": "2022-09",
+      "focos_inpe": 12696,
+      "focos_firms": 102051,
+      "ano": 2022,
+      "razao_firms_inpe": 8.038
+    },
+    {
+      "mes": "2022-10",
+      "focos_inpe": 7470,
+      "focos_firms": 54337,
+      "ano": 2022,
+      "razao_firms_inpe": 7.274
+    },
+    {
+      "mes": "2022-11",
+      "focos_inpe": 4505,
+      "focos_firms": 26271,
+      "ano": 2022,
+      "razao_firms_inpe": 5.8315
+    },
+    {
+      "mes": "2022-12",
+      "focos_inpe": 1472,
+      "focos_firms": 8102,
+      "ano": 2022,
+      "razao_firms_inpe": 5.5041
+    },
+    {
+      "mes": "2023-01",
+      "focos_inpe": 330,
+      "focos_firms": 1841,
+      "ano": 2023,
+      "razao_firms_inpe": 5.5788
+    },
+    {
+      "mes": "2023-02",
+      "focos_inpe": 94,
+      "focos_firms": 392,
+      "ano": 2023,
+      "razao_firms_inpe": 4.1702
+    },
+    {
+      "mes": "2023-03",
+      "focos_inpe": 94,
+      "focos_firms": 220,
+      "ano": 2023,
+      "razao_firms_inpe": 2.3404
+    },
+    {
+      "mes": "2023-04",
+      "focos_inpe": 58,
+      "focos_firms": 257,
+      "ano": 2023,
+      "razao_firms_inpe": 4.431
+    },
+    {
+      "mes": "2023-05",
+      "focos_inpe": 224,
+      "focos_firms": 985,
+      "ano": 2023,
+      "razao_firms_inpe": 4.3973
+    },
+    {
+      "mes": "2023-06",
+      "focos_inpe": 682,
+      "focos_firms": 4250,
+      "ano": 2023,
+      "razao_firms_inpe": 6.2317
+    },
+    {
+      "mes": "2023-07",
+      "focos_inpe": 2027,
+      "focos_firms": 10038,
+      "ano": 2023,
+      "razao_firms_inpe": 4.9521
+    },
+    {
+      "mes": "2023-08",
+      "focos_inpe": 6725,
+      "focos_firms": 48710,
+      "ano": 2023,
+      "razao_firms_inpe": 7.2431
+    },
+    {
+      "mes": "2023-09",
+      "focos_inpe": 9505,
+      "focos_firms": 62702,
+      "ano": 2023,
+      "razao_firms_inpe": 6.5967
+    },
+    {
+      "mes": "2023-10",
+      "focos_inpe": 11379,
+      "focos_firms": 83395,
+      "ano": 2023,
+      "razao_firms_inpe": 7.3289
+    },
+    {
+      "mes": "2023-11",
+      "focos_inpe": 8185,
+      "focos_firms": 63735,
+      "ano": 2023,
+      "razao_firms_inpe": 7.7868
+    },
+    {
+      "mes": "2023-12",
+      "focos_inpe": 2412,
+      "focos_firms": 12937,
+      "ano": 2023,
+      "razao_firms_inpe": 5.3636
+    },
+    {
+      "mes": "2024-01",
+      "focos_inpe": 633,
+      "focos_firms": 3659,
+      "ano": 2024,
+      "razao_firms_inpe": 5.7804
+    },
+    {
+      "mes": "2024-02",
+      "focos_inpe": 260,
+      "focos_firms": 1434,
+      "ano": 2024,
+      "razao_firms_inpe": 5.5154
+    },
+    {
+      "mes": "2024-03",
+      "focos_inpe": 113,
+      "focos_firms": 230,
+      "ano": 2024,
+      "razao_firms_inpe": 2.0354
+    },
+    {
+      "mes": "2024-04",
+      "focos_inpe": 52,
+      "focos_firms": 111,
+      "ano": 2024,
+      "razao_firms_inpe": 2.1346
+    },
+    {
+      "mes": "2024-05",
+      "focos_inpe": 211,
+      "focos_firms": 909,
+      "ano": 2024,
+      "razao_firms_inpe": 4.3081
+    },
+    {
+      "mes": "2024-06",
+      "focos_inpe": 635,
+      "focos_firms": 3533,
+      "ano": 2024,
+      "razao_firms_inpe": 5.5638
+    },
+    {
+      "mes": "2024-07",
+      "focos_inpe": 3265,
+      "focos_firms": 12046,
+      "ano": 2024,
+      "razao_firms_inpe": 3.6894
+    },
+    {
+      "mes": "2024-08",
+      "focos_inpe": 13803,
+      "focos_firms": 108548,
+      "ano": 2024,
+      "razao_firms_inpe": 7.8641
+    },
+    {
+      "mes": "2024-09",
+      "focos_inpe": 17434,
+      "focos_firms": 157829,
+      "ano": 2024,
+      "razao_firms_inpe": 9.0529
+    },
+    {
+      "mes": "2024-10",
+      "focos_inpe": 7119,
+      "focos_firms": 46665,
+      "ano": 2024,
+      "razao_firms_inpe": 6.555
+    },
+    {
+      "mes": "2024-11",
+      "focos_inpe": 9556,
+      "focos_firms": 61988,
+      "ano": 2024,
+      "razao_firms_inpe": 6.4868
+    },
+    {
+      "mes": "2024-12",
+      "focos_inpe": 2988,
+      "focos_firms": 17534,
+      "ano": 2024,
+      "razao_firms_inpe": 5.8681
+    },
+    {
+      "mes": "2025-01",
+      "focos_inpe": 356,
+      "focos_firms": 1307,
+      "ano": 2025,
+      "razao_firms_inpe": 3.6713
+    },
+    {
+      "mes": "2025-02",
+      "focos_inpe": 90,
+      "focos_firms": 202,
+      "ano": 2025,
+      "razao_firms_inpe": 2.2444
+    },
+    {
+      "mes": "2025-03",
+      "focos_inpe": 68,
+      "focos_firms": 175,
+      "ano": 2025,
+      "razao_firms_inpe": 2.5735
+    },
+    {
+      "mes": "2025-04",
+      "focos_inpe": 77,
+      "focos_firms": 240,
+      "ano": 2025,
+      "razao_firms_inpe": 3.1169
+    },
+    {
+      "mes": "2025-05",
+      "focos_inpe": 207,
+      "focos_firms": 976,
+      "ano": 2025,
+      "razao_firms_inpe": 4.715
+    },
+    {
+      "mes": "2025-06",
+      "focos_inpe": 405,
+      "focos_firms": 1944,
+      "ano": 2025,
+      "razao_firms_inpe": 4.8
+    },
+    {
+      "mes": "2025-07",
+      "focos_inpe": 837,
+      "focos_firms": 5131,
+      "ano": 2025,
+      "razao_firms_inpe": 6.1302
+    },
+    {
+      "mes": "2025-08",
+      "focos_inpe": 1314,
+      "focos_firms": 7576,
+      "ano": 2025,
+      "razao_firms_inpe": 5.7656
+    },
+    {
+      "mes": "2025-09",
+      "focos_inpe": 2967,
+      "focos_firms": 14101,
+      "ano": 2025,
+      "razao_firms_inpe": 4.7526
+    },
+    {
+      "mes": "2025-10",
+      "focos_inpe": 3682,
+      "focos_firms": 18336,
+      "ano": 2025,
+      "razao_firms_inpe": 4.9799
+    },
+    {
+      "mes": "2025-11",
+      "focos_inpe": 5658,
+      "focos_firms": 18762,
+      "ano": 2025,
+      "razao_firms_inpe": 3.316
+    },
+    {
+      "mes": "2025-12",
+      "focos_inpe": 2706,
+      "focos_firms": 9031,
+      "ano": 2025,
+      "razao_firms_inpe": 3.3374
+    }
+  ],
+  "sazonalidade": [
+    {
+      "mes_num": 1,
+      "focos_firms_medio": 1778.4,
+      "focos_inpe_medio": 335.3
+    },
+    {
+      "mes_num": 2,
+      "focos_firms_medio": 636.4,
+      "focos_inpe_medio": 132.9
+    },
+    {
+      "mes_num": 3,
+      "focos_firms_medio": 181.0,
+      "focos_inpe_medio": 64.6
+    },
+    {
+      "mes_num": 4,
+      "focos_firms_medio": 206.4,
+      "focos_inpe_medio": 50.7
+    },
+    {
+      "mes_num": 5,
+      "focos_firms_medio": 902.0,
+      "focos_inpe_medio": 175.0
+    },
+    {
+      "mes_num": 6,
+      "focos_firms_medio": 2895.0,
+      "focos_inpe_medio": 501.1
+    },
+    {
+      "mes_num": 7,
+      "focos_firms_medio": 9580.0,
+      "focos_inpe_medio": 1901.7
+    },
+    {
+      "mes_num": 8,
+      "focos_firms_medio": 63222.1,
+      "focos_inpe_medio": 9031.0
+    },
+    {
+      "mes_num": 9,
+      "focos_firms_medio": 70812.4,
+      "focos_inpe_medio": 8846.1
+    },
+    {
+      "mes_num": 10,
+      "focos_firms_medio": 45608.7,
+      "focos_inpe_medio": 6552.0
+    },
+    {
+      "mes_num": 11,
+      "focos_firms_medio": 35299.4,
+      "focos_inpe_medio": 5988.7
+    },
+    {
+      "mes_num": 12,
+      "focos_firms_medio": 11121.1,
+      "focos_inpe_medio": 2022.3
+    }
+  ],
+  "ranking_municipios": [
+    {
+      "cd_mun": "1500602",
+      "nm_mun": "Altamira",
+      "area_km2": 159549.69,
+      "focos_total": 217269,
+      "focos_por_km2": 1.362
+    },
+    {
+      "cd_mun": "1507300",
+      "nm_mun": "São Félix do Xingu",
+      "area_km2": 84255.93,
+      "focos_total": 202031,
+      "focos_por_km2": 2.398
+    },
+    {
+      "cd_mun": "1505031",
+      "nm_mun": "Novo Progresso",
+      "area_km2": 38177.25,
+      "focos_total": 116234,
+      "focos_por_km2": 3.045
+    },
+    {
+      "cd_mun": "1505809",
+      "nm_mun": "Portel",
+      "area_km2": 25421.81,
+      "focos_total": 74594,
+      "focos_por_km2": 2.934
+    },
+    {
+      "cd_mun": "1503606",
+      "nm_mun": "Itaituba",
+      "area_km2": 62104.22,
+      "focos_total": 67289,
+      "focos_por_km2": 1.083
+    },
+    {
+      "cd_mun": "1505486",
+      "nm_mun": "Pacajá",
+      "area_km2": 11852.98,
+      "focos_total": 54058,
+      "focos_por_km2": 4.561
+    },
+    {
+      "cd_mun": "1503754",
+      "nm_mun": "Jacareacanga",
+      "area_km2": 53394.89,
+      "focos_total": 36285,
+      "focos_por_km2": 0.68
+    },
+    {
+      "cd_mun": "1502764",
+      "nm_mun": "Cumaru do Norte",
+      "area_km2": 17105.26,
+      "focos_total": 34612,
+      "focos_por_km2": 2.023
+    },
+    {
+      "cd_mun": "1508159",
+      "nm_mun": "Uruará",
+      "area_km2": 10791.51,
+      "focos_total": 34310,
+      "focos_por_km2": 3.179
+    },
+    {
+      "cd_mun": "1504703",
+      "nm_mun": "Moju",
+      "area_km2": 9128.17,
+      "focos_total": 31132,
+      "focos_por_km2": 3.411
+    },
+    {
+      "cd_mun": "1505064",
+      "nm_mun": "Novo Repartimento",
+      "area_km2": 15431.58,
+      "focos_total": 29690,
+      "focos_por_km2": 1.924
+    },
+    {
+      "cd_mun": "1505437",
+      "nm_mun": "Ourilândia do Norte",
+      "area_km2": 14425.16,
+      "focos_total": 28683,
+      "focos_por_km2": 1.988
+    },
+    {
+      "cd_mun": "1506708",
+      "nm_mun": "Santana do Araguaia",
+      "area_km2": 11611.4,
+      "focos_total": 26030,
+      "focos_por_km2": 2.242
+    },
+    {
+      "cd_mun": "1505650",
+      "nm_mun": "Placas",
+      "area_km2": 7173.65,
+      "focos_total": 25745,
+      "focos_por_km2": 3.589
+    },
+    {
+      "cd_mun": "1506583",
+      "nm_mun": "Santa Maria das Barreiras",
+      "area_km2": 10351.41,
+      "focos_total": 24139,
+      "focos_por_km2": 2.332
+    },
+    {
+      "cd_mun": "1500859",
+      "nm_mun": "Anapu",
+      "area_km2": 11908.25,
+      "focos_total": 24094,
+      "focos_por_km2": 2.023
+    },
+    {
+      "cd_mun": "1505106",
+      "nm_mun": "Óbidos",
+      "area_km2": 28023.48,
+      "focos_total": 23370,
+      "focos_por_km2": 0.834
+    },
+    {
+      "cd_mun": "1508050",
+      "nm_mun": "Trairão",
+      "area_km2": 11998.66,
+      "focos_total": 23330,
+      "focos_por_km2": 1.944
+    },
+    {
+      "cd_mun": "1506005",
+      "nm_mun": "Prainha",
+      "area_km2": 14787.49,
+      "focos_total": 23257,
+      "focos_por_km2": 1.573
+    },
+    {
+      "cd_mun": "1506187",
+      "nm_mun": "Rondon do Pará",
+      "area_km2": 8285.31,
+      "focos_total": 21911,
+      "focos_por_km2": 2.645
+    },
+    {
+      "cd_mun": "1507805",
+      "nm_mun": "Senador José Porfírio",
+      "area_km2": 14430.96,
+      "focos_total": 21770,
+      "focos_por_km2": 1.509
+    },
+    {
+      "cd_mun": "1505502",
+      "nm_mun": "Paragominas",
+      "area_km2": 19464.66,
+      "focos_total": 20763,
+      "focos_por_km2": 1.067
+    },
+    {
+      "cd_mun": "1506195",
+      "nm_mun": "Rurópolis",
+      "area_km2": 7023.01,
+      "focos_total": 20613,
+      "focos_por_km2": 2.935
+    },
+    {
+      "cd_mun": "1504752",
+      "nm_mun": "Mojuí dos Campos",
+      "area_km2": 4988.65,
+      "focos_total": 20485,
+      "focos_por_km2": 4.106
+    },
+    {
+      "cd_mun": "1504455",
+      "nm_mun": "Medicilândia",
+      "area_km2": 8273.46,
+      "focos_total": 19565,
+      "focos_por_km2": 2.365
+    },
+    {
+      "cd_mun": "1502939",
+      "nm_mun": "Dom Eliseu",
+      "area_km2": 5298.7,
+      "focos_total": 18604,
+      "focos_por_km2": 3.511
+    },
+    {
+      "cd_mun": "1506807",
+      "nm_mun": "Santarém",
+      "area_km2": 17903.93,
+      "focos_total": 18599,
+      "focos_por_km2": 1.039
+    },
+    {
+      "cd_mun": "1505304",
+      "nm_mun": "Oriximiná",
+      "area_km2": 107788.7,
+      "focos_total": 16920,
+      "focos_por_km2": 0.157
+    },
+    {
+      "cd_mun": "1505908",
+      "nm_mun": "Porto de Moz",
+      "area_km2": 17428.99,
+      "focos_total": 16861,
+      "focos_por_km2": 0.967
+    },
+    {
+      "cd_mun": "1504208",
+      "nm_mun": "Marabá",
+      "area_km2": 15165.57,
+      "focos_total": 16836,
+      "focos_por_km2": 1.11
+    },
+    {
+      "cd_mun": "1500503",
+      "nm_mun": "Almeirim",
+      "area_km2": 72962.8,
+      "focos_total": 15154,
+      "focos_por_km2": 0.208
+    },
+    {
+      "cd_mun": "1504802",
+      "nm_mun": "Monte Alegre",
+      "area_km2": 18153.08,
+      "focos_total": 14883,
+      "focos_por_km2": 0.82
+    },
+    {
+      "cd_mun": "1500206",
+      "nm_mun": "Acará",
+      "area_km2": 4365.17,
+      "focos_total": 14781,
+      "focos_por_km2": 3.386
+    },
+    {
+      "cd_mun": "1507953",
+      "nm_mun": "Tailândia",
+      "area_km2": 4449.17,
+      "focos_total": 14701,
+      "focos_por_km2": 3.304
+    },
+    {
+      "cd_mun": "1502707",
+      "nm_mun": "Conceição do Araguaia",
+      "area_km2": 5847.21,
+      "focos_total": 14189,
+      "focos_por_km2": 2.427
+    },
+    {
+      "cd_mun": "1501006",
+      "nm_mun": "Aveiro",
+      "area_km2": 17085.59,
+      "focos_total": 13680,
+      "focos_por_km2": 0.801
+    },
+    {
+      "cd_mun": "1508001",
+      "nm_mun": "Tomé-Açu",
+      "area_km2": 5171.28,
+      "focos_total": 12921,
+      "focos_por_km2": 2.499
+    },
+    {
+      "cd_mun": "1500404",
+      "nm_mun": "Alenquer",
+      "area_km2": 23649.37,
+      "focos_total": 12914,
+      "focos_por_km2": 0.546
+    },
+    {
+      "cd_mun": "1508126",
+      "nm_mun": "Ulianópolis",
+      "area_km2": 5121.45,
+      "focos_total": 11475,
+      "focos_por_km2": 2.241
+    },
+    {
+      "cd_mun": "1503457",
+      "nm_mun": "Ipixuna do Pará",
+      "area_km2": 5245.06,
+      "focos_total": 11387,
+      "focos_por_km2": 2.171
+    },
+    {
+      "cd_mun": "1503093",
+      "nm_mun": "Goianésia do Pará",
+      "area_km2": 7050.71,
+      "focos_total": 10018,
+      "focos_por_km2": 1.421
+    },
+    {
+      "cd_mun": "1503705",
+      "nm_mun": "Itupiranga",
+      "area_km2": 7900.9,
+      "focos_total": 9142,
+      "focos_por_km2": 1.157
+    },
+    {
+      "cd_mun": "1502103",
+      "nm_mun": "Cametá",
+      "area_km2": 3091.03,
+      "focos_total": 7485,
+      "focos_por_km2": 2.422
+    },
+    {
+      "cd_mun": "1501253",
+      "nm_mun": "Bannach",
+      "area_km2": 2961.67,
+      "focos_total": 7108,
+      "focos_por_km2": 2.4
+    },
+    {
+      "cd_mun": "1500347",
+      "nm_mun": "Água Azul do Norte",
+      "area_km2": 7127.88,
+      "focos_total": 6850,
+      "focos_por_km2": 0.961
+    },
+    {
+      "cd_mun": "1501204",
+      "nm_mun": "Baião",
+      "area_km2": 3770.54,
+      "focos_total": 6760,
+      "focos_por_km2": 1.793
+    },
+    {
+      "cd_mun": "1505536",
+      "nm_mun": "Parauapebas",
+      "area_km2": 6898.9,
+      "focos_total": 6564,
+      "focos_por_km2": 0.951
+    },
+    {
+      "cd_mun": "1503903",
+      "nm_mun": "Juruti",
+      "area_km2": 8310.76,
+      "focos_total": 6443,
+      "focos_por_km2": 0.775
+    },
+    {
+      "cd_mun": "1504950",
+      "nm_mun": "Nova Esperança do Piriá",
+      "area_km2": 2829.78,
+      "focos_total": 6412,
+      "focos_por_km2": 2.266
+    },
+    {
+      "cd_mun": "1501956",
+      "nm_mun": "Cachoeira do Piriá",
+      "area_km2": 2440.78,
+      "focos_total": 6209,
+      "focos_por_km2": 2.544
+    },
+    {
+      "cd_mun": "1501782",
+      "nm_mun": "Breu Branco",
+      "area_km2": 3954.76,
+      "focos_total": 5985,
+      "focos_por_km2": 1.513
+    },
+    {
+      "cd_mun": "1507201",
+      "nm_mun": "São Domingos do Capim",
+      "area_km2": 1696.91,
+      "focos_total": 5877,
+      "focos_por_km2": 3.463
+    },
+    {
+      "cd_mun": "1505205",
+      "nm_mun": "Oeiras do Pará",
+      "area_km2": 3862.13,
+      "focos_total": 5816,
+      "focos_por_km2": 1.506
+    },
+    {
+      "cd_mun": "1501725",
+      "nm_mun": "Brasil Novo",
+      "area_km2": 6364.31,
+      "focos_total": 5325,
+      "focos_por_km2": 0.837
+    },
+    {
+      "cd_mun": "1503101",
+      "nm_mun": "Gurupá",
+      "area_km2": 8578.25,
+      "focos_total": 4732,
+      "focos_por_km2": 0.552
+    },
+    {
+      "cd_mun": "1502301",
+      "nm_mun": "Capitão Poço",
+      "area_km2": 2921.24,
+      "focos_total": 4611,
+      "focos_por_km2": 1.578
+    },
+    {
+      "cd_mun": "1501451",
+      "nm_mun": "Belterra",
+      "area_km2": 4399.1,
+      "focos_total": 4548,
+      "focos_por_km2": 1.034
+    },
+    {
+      "cd_mun": "1503044",
+      "nm_mun": "Floresta do Araguaia",
+      "area_km2": 3454.39,
+      "focos_total": 4488,
+      "focos_por_km2": 1.299
+    },
+    {
+      "cd_mun": "1500958",
+      "nm_mun": "Aurora do Pará",
+      "area_km2": 1822.67,
+      "focos_total": 4375,
+      "focos_por_km2": 2.4
+    },
+    {
+      "cd_mun": "1508308",
+      "nm_mun": "Viseu",
+      "area_km2": 5016.54,
+      "focos_total": 4361,
+      "focos_por_km2": 0.869
+    },
+    {
+      "cd_mun": "1501576",
+      "nm_mun": "Bom Jesus do Tocantins",
+      "area_km2": 2828.39,
+      "focos_total": 4320,
+      "focos_por_km2": 1.527
+    },
+    {
+      "cd_mun": "1505551",
+      "nm_mun": "Pau D'Arco",
+      "area_km2": 1675.18,
+      "focos_total": 4130,
+      "focos_por_km2": 2.465
+    },
+    {
+      "cd_mun": "1508100",
+      "nm_mun": "Tucuruí",
+      "area_km2": 2089.85,
+      "focos_total": 4006,
+      "focos_por_km2": 1.917
+    },
+    {
+      "cd_mun": "1501907",
+      "nm_mun": "Bujaru",
+      "area_km2": 1000.0,
+      "focos_total": 3874,
+      "focos_por_km2": 3.874
+    },
+    {
+      "cd_mun": "1506161",
+      "nm_mun": "Rio Maria",
+      "area_km2": 4125.22,
+      "focos_total": 3853,
+      "focos_por_km2": 0.934
+    },
+    {
+      "cd_mun": "1502509",
+      "nm_mun": "Chaves",
+      "area_km2": 12568.64,
+      "focos_total": 3830,
+      "focos_por_km2": 0.305
+    },
+    {
+      "cd_mun": "1506138",
+      "nm_mun": "Redenção",
+      "area_km2": 3832.17,
+      "focos_total": 3718,
+      "focos_por_km2": 0.97
+    },
+    {
+      "cd_mun": "1501808",
+      "nm_mun": "Breves",
+      "area_km2": 9583.44,
+      "focos_total": 3650,
+      "focos_por_km2": 0.381
+    },
+    {
+      "cd_mun": "1504901",
+      "nm_mun": "Muaná",
+      "area_km2": 3776.15,
+      "focos_total": 3389,
+      "focos_por_km2": 0.897
+    },
+    {
+      "cd_mun": "1501105",
+      "nm_mun": "Bagre",
+      "area_km2": 4407.1,
+      "focos_total": 3377,
+      "focos_por_km2": 0.766
+    },
+    {
+      "cd_mun": "1504604",
+      "nm_mun": "Mocajuba",
+      "area_km2": 873.82,
+      "focos_total": 3213,
+      "focos_por_km2": 3.677
+    },
+    {
+      "cd_mun": "1502152",
+      "nm_mun": "Canaã dos Carajás",
+      "area_km2": 3154.06,
+      "focos_total": 3190,
+      "focos_por_km2": 1.011
+    },
+    {
+      "cd_mun": "1503077",
+      "nm_mun": "Garrafão do Norte",
+      "area_km2": 1619.95,
+      "focos_total": 3057,
+      "focos_por_km2": 1.887
+    },
+    {
+      "cd_mun": "1501709",
+      "nm_mun": "Bragança",
+      "area_km2": 2141.62,
+      "focos_total": 3007,
+      "focos_por_km2": 1.404
+    },
+    {
+      "cd_mun": "1505700",
+      "nm_mun": "Ponta de Pedras",
+      "area_km2": 3376.34,
+      "focos_total": 2921,
+      "focos_por_km2": 0.865
+    },
+    {
+      "cd_mun": "1503507",
+      "nm_mun": "Irituia",
+      "area_km2": 1394.45,
+      "focos_total": 2889,
+      "focos_por_km2": 2.072
+    },
+    {
+      "cd_mun": "1502855",
+      "nm_mun": "Curuá",
+      "area_km2": 1431.41,
+      "focos_total": 2874,
+      "focos_por_km2": 2.008
+    },
+    {
+      "cd_mun": "1508084",
+      "nm_mun": "Tucumã",
+      "area_km2": 2515.19,
+      "focos_total": 2824,
+      "focos_por_km2": 1.123
+    },
+    {
+      "cd_mun": "1507607",
+      "nm_mun": "São Miguel do Guamá",
+      "area_km2": 1101.46,
+      "focos_total": 2666,
+      "focos_por_km2": 2.42
+    },
+    {
+      "cd_mun": "1502756",
+      "nm_mun": "Concórdia do Pará",
+      "area_km2": 704.46,
+      "focos_total": 2638,
+      "focos_por_km2": 3.745
+    },
+    {
+      "cd_mun": "1502772",
+      "nm_mun": "Curionópolis",
+      "area_km2": 2375.95,
+      "focos_total": 2506,
+      "focos_por_km2": 1.055
+    },
+    {
+      "cd_mun": "1502004",
+      "nm_mun": "Cachoeira do Arari",
+      "area_km2": 3112.65,
+      "focos_total": 2500,
+      "focos_por_km2": 0.803
+    },
+    {
+      "cd_mun": "1502806",
+      "nm_mun": "Curralinho",
+      "area_km2": 3626.2,
+      "focos_total": 2491,
+      "focos_por_km2": 0.687
+    },
+    {
+      "cd_mun": "1503309",
+      "nm_mun": "Igarapé-Miri",
+      "area_km2": 2003.92,
+      "focos_total": 2451,
+      "focos_por_km2": 1.223
+    },
+    {
+      "cd_mun": "1502954",
+      "nm_mun": "Eldorado do Carajás",
+      "area_km2": 2966.81,
+      "focos_total": 2410,
+      "focos_por_km2": 0.812
+    },
+    {
+      "cd_mun": "1500107",
+      "nm_mun": "Abaetetuba",
+      "area_km2": 1617.13,
+      "focos_total": 2262,
+      "focos_por_km2": 1.399
+    },
+    {
+      "cd_mun": "1507979",
+      "nm_mun": "Terra Santa",
+      "area_km2": 1897.67,
+      "focos_total": 2035,
+      "focos_por_km2": 1.072
+    },
+    {
+      "cd_mun": "1500131",
+      "nm_mun": "Abel Figueiredo",
+      "area_km2": 616.89,
+      "focos_total": 1929,
+      "focos_por_km2": 3.127
+    },
+    {
+      "cd_mun": "1504505",
+      "nm_mun": "Melgaço",
+      "area_km2": 6782.79,
+      "focos_total": 1894,
+      "focos_por_km2": 0.279
+    },
+    {
+      "cd_mun": "1504976",
+      "nm_mun": "Nova Ipixuna",
+      "area_km2": 1569.54,
+      "focos_total": 1748,
+      "focos_por_km2": 1.114
+    },
+    {
+      "cd_mun": "1508357",
+      "nm_mun": "Vitória do Xingu",
+      "area_km2": 3091.57,
+      "focos_total": 1719,
+      "focos_por_km2": 0.556
+    },
+    {
+      "cd_mun": "1500909",
+      "nm_mun": "Augusto Corrêa",
+      "area_km2": 1108.88,
+      "focos_total": 1654,
+      "focos_por_km2": 1.492
+    },
+    {
+      "cd_mun": "1507458",
+      "nm_mun": "São Geraldo do Araguaia",
+      "area_km2": 3181.81,
+      "focos_total": 1629,
+      "focos_por_km2": 0.512
+    },
+    {
+      "cd_mun": "1507508",
+      "nm_mun": "São João do Araguaia",
+      "area_km2": 1285.4,
+      "focos_total": 1580,
+      "focos_por_km2": 1.229
+    },
+    {
+      "cd_mun": "1508407",
+      "nm_mun": "Xinguara",
+      "area_km2": 3790.07,
+      "focos_total": 1518,
+      "focos_por_km2": 0.401
+    },
+    {
+      "cd_mun": "1503002",
+      "nm_mun": "Faro",
+      "area_km2": 11798.47,
+      "focos_total": 1428,
+      "focos_por_km2": 0.121
+    },
+    {
+      "cd_mun": "1504307",
+      "nm_mun": "Maracanã",
+      "area_km2": 812.87,
+      "focos_total": 1378,
+      "focos_por_km2": 1.695
+    },
+    {
+      "cd_mun": "1503804",
+      "nm_mun": "Jacundá",
+      "area_km2": 2015.41,
+      "focos_total": 1366,
+      "focos_por_km2": 0.678
+    },
+    {
+      "cd_mun": "1504406",
+      "nm_mun": "Marapanim",
+      "area_km2": 809.53,
+      "focos_total": 1347,
+      "focos_por_km2": 1.664
+    },
+    {
+      "cd_mun": "1506302",
+      "nm_mun": "Salvaterra",
+      "area_km2": 922.72,
+      "focos_total": 1242,
+      "focos_por_km2": 1.346
+    },
+    {
+      "cd_mun": "1506559",
+      "nm_mun": "Santa Luzia do Pará",
+      "area_km2": 1356.84,
+      "focos_total": 1177,
+      "focos_por_km2": 0.867
+    },
+    {
+      "cd_mun": "1501303",
+      "nm_mun": "Barcarena",
+      "area_km2": 1316.03,
+      "focos_total": 1071,
+      "focos_por_km2": 0.814
+    },
+    {
+      "cd_mun": "1507904",
+      "nm_mun": "Soure",
+      "area_km2": 2869.65,
+      "focos_total": 1069,
+      "focos_por_km2": 0.373
+    },
+    {
+      "cd_mun": "1505635",
+      "nm_mun": "Piçarra",
+      "area_km2": 3325.15,
+      "focos_total": 1033,
+      "focos_por_km2": 0.311
+    },
+    {
+      "cd_mun": "1502400",
+      "nm_mun": "Castanhal",
+      "area_km2": 1035.2,
+      "focos_total": 978,
+      "focos_por_km2": 0.945
+    },
+    {
+      "cd_mun": "1505403",
+      "nm_mun": "Ourém",
+      "area_km2": 565.82,
+      "focos_total": 941,
+      "focos_por_km2": 1.663
+    },
+    {
+      "cd_mun": "1508035",
+      "nm_mun": "Tracuateua",
+      "area_km2": 874.7,
+      "focos_total": 904,
+      "focos_por_km2": 1.033
+    },
+    {
+      "cd_mun": "1501600",
+      "nm_mun": "Bonito",
+      "area_km2": 591.01,
+      "focos_total": 887,
+      "focos_por_km2": 1.501
+    },
+    {
+      "cd_mun": "1506401",
+      "nm_mun": "Santa Cruz do Arari",
+      "area_km2": 1080.2,
+      "focos_total": 867,
+      "focos_por_km2": 0.803
+    },
+    {
+      "cd_mun": "1507151",
+      "nm_mun": "São Domingos do Araguaia",
+      "area_km2": 1398.29,
+      "focos_total": 828,
+      "focos_por_km2": 0.592
+    },
+    {
+      "cd_mun": "1503200",
+      "nm_mun": "Igarapé-Açu",
+      "area_km2": 791.08,
+      "focos_total": 795,
+      "focos_por_km2": 1.005
+    },
+    {
+      "cd_mun": "1507474",
+      "nm_mun": "São João de Pirabas",
+      "area_km2": 673.07,
+      "focos_total": 728,
+      "focos_por_km2": 1.082
+    },
+    {
+      "cd_mun": "1501758",
+      "nm_mun": "Brejo Grande do Araguaia",
+      "area_km2": 1294.47,
+      "focos_total": 615,
+      "focos_por_km2": 0.475
+    },
+    {
+      "cd_mun": "1504109",
+      "nm_mun": "Magalhães Barata",
+      "area_km2": 325.94,
+      "focos_total": 590,
+      "focos_por_km2": 1.81
+    },
+    {
+      "cd_mun": "1507409",
+      "nm_mun": "São Francisco do Pará",
+      "area_km2": 482.23,
+      "focos_total": 589,
+      "focos_por_km2": 1.221
+    },
+    {
+      "cd_mun": "1502905",
+      "nm_mun": "Curuçá",
+      "area_km2": 680.11,
+      "focos_total": 583,
+      "focos_por_km2": 0.857
+    },
+    {
+      "cd_mun": "1503408",
+      "nm_mun": "Inhangapi",
+      "area_km2": 475.21,
+      "focos_total": 556,
+      "focos_por_km2": 1.17
+    },
+    {
+      "cd_mun": "1506609",
+      "nm_mun": "Santa Maria do Pará",
+      "area_km2": 460.69,
+      "focos_total": 556,
+      "focos_por_km2": 1.207
+    },
+    {
+      "cd_mun": "1502202",
+      "nm_mun": "Capanema",
+      "area_km2": 625.83,
+      "focos_total": 525,
+      "focos_por_km2": 0.839
+    },
+    {
+      "cd_mun": "1500305",
+      "nm_mun": "Afuá",
+      "area_km2": 8352.21,
+      "focos_total": 519,
+      "focos_por_km2": 0.062
+    },
+    {
+      "cd_mun": "1507102",
+      "nm_mun": "São Caetano de Odivelas",
+      "area_km2": 466.64,
+      "focos_total": 519,
+      "focos_por_km2": 1.112
+    },
+    {
+      "cd_mun": "1505601",
+      "nm_mun": "Peixe-Boi",
+      "area_km2": 453.31,
+      "focos_total": 490,
+      "focos_por_km2": 1.081
+    },
+    {
+      "cd_mun": "1505007",
+      "nm_mun": "Nova Timboteua",
+      "area_km2": 493.12,
+      "focos_total": 461,
+      "focos_por_km2": 0.935
+    },
+    {
+      "cd_mun": "1506104",
+      "nm_mun": "Primavera",
+      "area_km2": 260.48,
+      "focos_total": 450,
+      "focos_por_km2": 1.728
+    },
+    {
+      "cd_mun": "1506500",
+      "nm_mun": "Santa Izabel do Pará",
+      "area_km2": 721.53,
+      "focos_total": 449,
+      "focos_por_km2": 0.622
+    },
+    {
+      "cd_mun": "1507003",
+      "nm_mun": "Santo Antônio do Tauá",
+      "area_km2": 540.46,
+      "focos_total": 437,
+      "focos_por_km2": 0.809
+    },
+    {
+      "cd_mun": "1507755",
+      "nm_mun": "Sapucaia",
+      "area_km2": 1302.05,
+      "focos_total": 410,
+      "focos_por_km2": 0.315
+    },
+    {
+      "cd_mun": "1500701",
+      "nm_mun": "Anajás",
+      "area_km2": 6930.97,
+      "focos_total": 409,
+      "focos_por_km2": 0.059
+    },
+    {
+      "cd_mun": "1504059",
+      "nm_mun": "Mãe do Rio",
+      "area_km2": 472.36,
+      "focos_total": 399,
+      "focos_por_km2": 0.845
+    },
+    {
+      "cd_mun": "1507706",
+      "nm_mun": "São Sebastião da Boa Vista",
+      "area_km2": 1636.85,
+      "focos_total": 385,
+      "focos_por_km2": 0.235
+    },
+    {
+      "cd_mun": "1501402",
+      "nm_mun": "Belém",
+      "area_km2": 1064.55,
+      "focos_total": 319,
+      "focos_por_km2": 0.3
+    },
+    {
+      "cd_mun": "1505494",
+      "nm_mun": "Palestina do Pará",
+      "area_km2": 989.15,
+      "focos_total": 303,
+      "focos_por_km2": 0.306
+    },
+    {
+      "cd_mun": "1507466",
+      "nm_mun": "São João da Ponta",
+      "area_km2": 196.99,
+      "focos_total": 289,
+      "focos_por_km2": 1.467
+    },
+    {
+      "cd_mun": "1506906",
+      "nm_mun": "Santarém Novo",
+      "area_km2": 231.12,
+      "focos_total": 288,
+      "focos_por_km2": 1.246
+    },
+    {
+      "cd_mun": "1504000",
+      "nm_mun": "Limoeiro do Ajuru",
+      "area_km2": 1494.9,
+      "focos_total": 264,
+      "focos_por_km2": 0.177
+    },
+    {
+      "cd_mun": "1508209",
+      "nm_mun": "Vigia",
+      "area_km2": 403.64,
+      "focos_total": 259,
+      "focos_por_km2": 0.642
+    },
+    {
+      "cd_mun": "1507961",
+      "nm_mun": "Terra Alta",
+      "area_km2": 206.18,
+      "focos_total": 228,
+      "focos_por_km2": 1.106
+    },
+    {
+      "cd_mun": "1502608",
+      "nm_mun": "Colares",
+      "area_km2": 386.04,
+      "focos_total": 227,
+      "focos_por_km2": 0.588
+    },
+    {
+      "cd_mun": "1506112",
+      "nm_mun": "Quatipuru",
+      "area_km2": 305.24,
+      "focos_total": 189,
+      "focos_por_km2": 0.619
+    },
+    {
+      "cd_mun": "1506203",
+      "nm_mun": "Salinópolis",
+      "area_km2": 227.71,
+      "focos_total": 126,
+      "focos_por_km2": 0.553
+    },
+    {
+      "cd_mun": "1506351",
+      "nm_mun": "Santa Bárbara do Pará",
+      "area_km2": 279.49,
+      "focos_total": 114,
+      "focos_por_km2": 0.408
+    },
+    {
+      "cd_mun": "1501501",
+      "nm_mun": "Benevides",
+      "area_km2": 188.79,
+      "focos_total": 62,
+      "focos_por_km2": 0.328
+    },
+    {
+      "cd_mun": "1500800",
+      "nm_mun": "Ananindeua",
+      "area_km2": 191.55,
+      "focos_total": 15,
+      "focos_por_km2": 0.078
+    },
+    {
+      "cd_mun": "1504422",
+      "nm_mun": "Marituba",
+      "area_km2": 103.69,
+      "focos_total": 13,
+      "focos_por_km2": 0.125
+    }
+  ],
+  "clima_sazonalidade": [
+    {
+      "mes_num": 1,
+      "prec_mm": 284.65,
+      "t2m_media_c": 25.59,
+      "ur_pct": 85.62,
+      "dpv_kpa": 0.47,
+      "rf_inpe_media": 0.03,
+      "focos_count": 12449,
+      "mes_nome": "Jan"
+    },
+    {
+      "mes_num": 2,
+      "prec_mm": 354.34,
+      "t2m_media_c": 25.48,
+      "ur_pct": 86.85,
+      "dpv_kpa": 0.43,
+      "rf_inpe_media": 0.01,
+      "focos_count": 4455,
+      "mes_nome": "Fev"
+    },
+    {
+      "mes_num": 3,
+      "prec_mm": 454.96,
+      "t2m_media_c": 25.31,
+      "ur_pct": 87.97,
+      "dpv_kpa": 0.39,
+      "rf_inpe_media": 0.0,
+      "focos_count": 1267,
+      "mes_nome": "Mar"
+    },
+    {
+      "mes_num": 4,
+      "prec_mm": 336.68,
+      "t2m_media_c": 25.62,
+      "ur_pct": 87.47,
+      "dpv_kpa": 0.41,
+      "rf_inpe_media": 0.01,
+      "focos_count": 1445,
+      "mes_nome": "Abr"
+    },
+    {
+      "mes_num": 5,
+      "prec_mm": 210.57,
+      "t2m_media_c": 26.12,
+      "ur_pct": 84.27,
+      "dpv_kpa": 0.53,
+      "rf_inpe_media": 0.08,
+      "focos_count": 6314,
+      "mes_nome": "Mai"
+    },
+    {
+      "mes_num": 6,
+      "prec_mm": 90.59,
+      "t2m_media_c": 26.32,
+      "ur_pct": 78.47,
+      "dpv_kpa": 0.75,
+      "rf_inpe_media": 0.22,
+      "focos_count": 20265,
+      "mes_nome": "Jun"
+    },
+    {
+      "mes_num": 7,
+      "prec_mm": 52.1,
+      "t2m_media_c": 26.85,
+      "ur_pct": 70.94,
+      "dpv_kpa": 1.04,
+      "rf_inpe_media": 0.35,
+      "focos_count": 67060,
+      "mes_nome": "Jul"
+    },
+    {
+      "mes_num": 8,
+      "prec_mm": 35.11,
+      "t2m_media_c": 27.63,
+      "ur_pct": 66.71,
+      "dpv_kpa": 1.25,
+      "rf_inpe_media": 0.47,
+      "focos_count": 442555,
+      "mes_nome": "Ago"
+    },
+    {
+      "mes_num": 9,
+      "prec_mm": 26.05,
+      "t2m_media_c": 28.33,
+      "ur_pct": 65.49,
+      "dpv_kpa": 1.35,
+      "rf_inpe_media": 0.54,
+      "focos_count": 495687,
+      "mes_nome": "Set"
+    },
+    {
+      "mes_num": 10,
+      "prec_mm": 48.78,
+      "t2m_media_c": 28.28,
+      "ur_pct": 68.38,
+      "dpv_kpa": 1.23,
+      "rf_inpe_media": 0.47,
+      "focos_count": 319261,
+      "mes_nome": "Out"
+    },
+    {
+      "mes_num": 11,
+      "prec_mm": 115.84,
+      "t2m_media_c": 27.53,
+      "ur_pct": 74.31,
+      "dpv_kpa": 0.96,
+      "rf_inpe_media": 0.32,
+      "focos_count": 247096,
+      "mes_nome": "Nov"
+    },
+    {
+      "mes_num": 12,
+      "prec_mm": 175.31,
+      "t2m_media_c": 26.73,
+      "ur_pct": 80.08,
+      "dpv_kpa": 0.71,
+      "rf_inpe_media": 0.15,
+      "focos_count": 77848,
+      "mes_nome": "Dez"
+    }
+  ],
+  "mapbiomas_evolucao": [
+    {
+      "ano": 2018,
+      "pct_floresta": 56.12,
+      "pct_pastagem": 29.83,
+      "pct_agricultura": 1.48,
+      "pct_savana": 0.34,
+      "pct_campo_natural": 4.99,
+      "pct_veg_nativa": 61.45,
+      "pct_antropico": 32.41
+    },
+    {
+      "ano": 2019,
+      "pct_floresta": 55.79,
+      "pct_pastagem": 30.11,
+      "pct_agricultura": 1.52,
+      "pct_savana": 0.34,
+      "pct_campo_natural": 4.98,
+      "pct_veg_nativa": 61.11,
+      "pct_antropico": 32.76
+    },
+    {
+      "ano": 2020,
+      "pct_floresta": 55.55,
+      "pct_pastagem": 30.29,
+      "pct_agricultura": 1.57,
+      "pct_savana": 0.33,
+      "pct_campo_natural": 4.99,
+      "pct_veg_nativa": 60.88,
+      "pct_antropico": 33.03
+    },
+    {
+      "ano": 2021,
+      "pct_floresta": 55.17,
+      "pct_pastagem": 30.63,
+      "pct_agricultura": 1.61,
+      "pct_savana": 0.32,
+      "pct_campo_natural": 4.96,
+      "pct_veg_nativa": 60.45,
+      "pct_antropico": 33.45
+    },
+    {
+      "ano": 2022,
+      "pct_floresta": 54.81,
+      "pct_pastagem": 31.11,
+      "pct_agricultura": 1.62,
+      "pct_savana": 0.33,
+      "pct_campo_natural": 4.63,
+      "pct_veg_nativa": 59.77,
+      "pct_antropico": 33.98
+    },
+    {
+      "ano": 2023,
+      "pct_floresta": 53.94,
+      "pct_pastagem": 31.98,
+      "pct_agricultura": 1.62,
+      "pct_savana": 0.32,
+      "pct_campo_natural": 4.67,
+      "pct_veg_nativa": 58.93,
+      "pct_antropico": 34.89
+    },
+    {
+      "ano": 2024,
+      "pct_floresta": 53.64,
+      "pct_pastagem": 32.31,
+      "pct_agricultura": 1.63,
+      "pct_savana": 0.31,
+      "pct_campo_natural": 4.65,
+      "pct_veg_nativa": 58.6,
+      "pct_antropico": 35.26
+    }
+  ],
+  "prodes_evolucao": [
+    {
+      "ano": 2018,
+      "desmat_km2": 2610.68,
+      "desmat_pct_area": 0.16
+    },
+    {
+      "ano": 2019,
+      "desmat_km2": 4465.45,
+      "desmat_pct_area": 0.25
+    },
+    {
+      "ano": 2020,
+      "desmat_km2": 4618.78,
+      "desmat_pct_area": 0.25
+    },
+    {
+      "ano": 2021,
+      "desmat_km2": 5084.12,
+      "desmat_pct_area": 0.27
+    },
+    {
+      "ano": 2022,
+      "desmat_km2": 4532.38,
+      "desmat_pct_area": 0.23
+    },
+    {
+      "ano": 2023,
+      "desmat_km2": 2884.99,
+      "desmat_pct_area": 0.19
+    },
+    {
+      "ano": 2024,
+      "desmat_km2": 2266.07,
+      "desmat_pct_area": 0.17
+    },
+    {
+      "ano": 2025,
+      "desmat_km2": 1955.16,
+      "desmat_pct_area": 0.14
+    }
+  ],
+  "renda_ranking_144": [
+    {
+      "cd_mun": "1505031",
+      "nm_mun": "Novo Progresso",
+      "renda_pc": 1000.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502152",
+      "nm_mun": "Canaã dos Carajás",
+      "renda_pc": 940.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506138",
+      "nm_mun": "Redenção",
+      "renda_pc": 896.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505536",
+      "nm_mun": "Parauapebas",
+      "renda_pc": 875.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501402",
+      "nm_mun": "Belém",
+      "renda_pc": 842.4,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500602",
+      "nm_mun": "Altamira",
+      "renda_pc": 808.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508407",
+      "nm_mun": "Xinguara",
+      "renda_pc": 808.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500800",
+      "nm_mun": "Ananindeua",
+      "renda_pc": 806.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506583",
+      "nm_mun": "Santa Maria das Barreiras",
+      "renda_pc": 804.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503606",
+      "nm_mun": "Itaituba",
+      "renda_pc": 800.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506708",
+      "nm_mun": "Santana do Araguaia",
+      "renda_pc": 800.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508084",
+      "nm_mun": "Tucumã",
+      "renda_pc": 800.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500347",
+      "nm_mun": "Água Azul do Norte",
+      "renda_pc": 756.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502772",
+      "nm_mun": "Curionópolis",
+      "renda_pc": 750.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507300",
+      "nm_mun": "São Félix do Xingu",
+      "renda_pc": 740.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504208",
+      "nm_mun": "Marabá",
+      "renda_pc": 737.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508050",
+      "nm_mun": "Trairão",
+      "renda_pc": 718.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502707",
+      "nm_mun": "Conceição do Araguaia",
+      "renda_pc": 714.29,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508100",
+      "nm_mun": "Tucuruí",
+      "renda_pc": 704.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506161",
+      "nm_mun": "Rio Maria",
+      "renda_pc": 700.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501576",
+      "nm_mun": "Bom Jesus do Tocantins",
+      "renda_pc": 684.8,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502764",
+      "nm_mun": "Cumaru do Norte",
+      "renda_pc": 680.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505551",
+      "nm_mun": "Pau D'Arco",
+      "renda_pc": 680.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505502",
+      "nm_mun": "Paragominas",
+      "renda_pc": 672.5,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502400",
+      "nm_mun": "Castanhal",
+      "renda_pc": 670.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502202",
+      "nm_mun": "Capanema",
+      "renda_pc": 670.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501253",
+      "nm_mun": "Bannach",
+      "renda_pc": 666.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501303",
+      "nm_mun": "Barcarena",
+      "renda_pc": 666.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505635",
+      "nm_mun": "Piçarra",
+      "renda_pc": 660.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506187",
+      "nm_mun": "Rondon do Pará",
+      "renda_pc": 650.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503804",
+      "nm_mun": "Jacundá",
+      "renda_pc": 650.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506807",
+      "nm_mun": "Santarém",
+      "renda_pc": 633.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500131",
+      "nm_mun": "Abel Figueiredo",
+      "renda_pc": 628.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505437",
+      "nm_mun": "Ourilândia do Norte",
+      "renda_pc": 625.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504422",
+      "nm_mun": "Marituba",
+      "renda_pc": 625.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506500",
+      "nm_mun": "Santa Izabel do Pará",
+      "renda_pc": 616.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505494",
+      "nm_mun": "Palestina do Pará",
+      "renda_pc": 606.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506203",
+      "nm_mun": "Salinópolis",
+      "renda_pc": 606.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508357",
+      "nm_mun": "Vitória do Xingu",
+      "renda_pc": 606.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508159",
+      "nm_mun": "Uruará",
+      "renda_pc": 606.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507458",
+      "nm_mun": "São Geraldo do Araguaia",
+      "renda_pc": 606.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501501",
+      "nm_mun": "Benevides",
+      "renda_pc": 606.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502939",
+      "nm_mun": "Dom Eliseu",
+      "renda_pc": 604.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506351",
+      "nm_mun": "Santa Bárbara do Pará",
+      "renda_pc": 600.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507755",
+      "nm_mun": "Sapucaia",
+      "renda_pc": 600.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507953",
+      "nm_mun": "Tailândia",
+      "renda_pc": 600.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503093",
+      "nm_mun": "Goianésia do Pará",
+      "renda_pc": 600.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502954",
+      "nm_mun": "Eldorado do Carajás",
+      "renda_pc": 600.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507151",
+      "nm_mun": "São Domingos do Araguaia",
+      "renda_pc": 600.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506609",
+      "nm_mun": "Santa Maria do Pará",
+      "renda_pc": 597.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503044",
+      "nm_mun": "Floresta do Araguaia",
+      "renda_pc": 592.4,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504976",
+      "nm_mun": "Nova Ipixuna",
+      "renda_pc": 575.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501758",
+      "nm_mun": "Brejo Grande do Araguaia",
+      "renda_pc": 575.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504752",
+      "nm_mun": "Mojuí dos Campos",
+      "renda_pc": 568.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508126",
+      "nm_mun": "Ulianópolis",
+      "renda_pc": 562.4,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506195",
+      "nm_mun": "Rurópolis",
+      "renda_pc": 561.2,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501600",
+      "nm_mun": "Bonito",
+      "renda_pc": 550.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504059",
+      "nm_mun": "Mãe do Rio",
+      "renda_pc": 550.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501725",
+      "nm_mun": "Brasil Novo",
+      "renda_pc": 546.29,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508209",
+      "nm_mun": "Vigia",
+      "renda_pc": 542.4,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504455",
+      "nm_mun": "Medicilândia",
+      "renda_pc": 538.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506906",
+      "nm_mun": "Santarém Novo",
+      "renda_pc": 537.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505601",
+      "nm_mun": "Peixe-Boi",
+      "renda_pc": 537.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500107",
+      "nm_mun": "Abaetetuba",
+      "renda_pc": 537.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501782",
+      "nm_mun": "Breu Branco",
+      "renda_pc": 533.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501709",
+      "nm_mun": "Bragança",
+      "renda_pc": 529.5,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505064",
+      "nm_mun": "Novo Repartimento",
+      "renda_pc": 525.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502301",
+      "nm_mun": "Capitão Poço",
+      "renda_pc": 525.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507607",
+      "nm_mun": "São Miguel do Guamá",
+      "renda_pc": 520.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508001",
+      "nm_mun": "Tomé-Açu",
+      "renda_pc": 516.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507979",
+      "nm_mun": "Terra Santa",
+      "renda_pc": 516.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502756",
+      "nm_mun": "Concórdia do Pará",
+      "renda_pc": 516.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507409",
+      "nm_mun": "São Francisco do Pará",
+      "renda_pc": 501.5,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503408",
+      "nm_mun": "Inhangapi",
+      "renda_pc": 500.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500859",
+      "nm_mun": "Anapu",
+      "renda_pc": 500.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507003",
+      "nm_mun": "Santo Antônio do Tauá",
+      "renda_pc": 500.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501451",
+      "nm_mun": "Belterra",
+      "renda_pc": 500.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503200",
+      "nm_mun": "Igarapé-Açu",
+      "renda_pc": 500.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505650",
+      "nm_mun": "Placas",
+      "renda_pc": 500.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503705",
+      "nm_mun": "Itupiranga",
+      "renda_pc": 489.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507961",
+      "nm_mun": "Terra Alta",
+      "renda_pc": 487.5,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500503",
+      "nm_mun": "Almeirim",
+      "renda_pc": 487.5,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507904",
+      "nm_mun": "Soure",
+      "renda_pc": 487.43,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505486",
+      "nm_mun": "Pacajá",
+      "renda_pc": 483.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507508",
+      "nm_mun": "São João do Araguaia",
+      "renda_pc": 480.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506112",
+      "nm_mun": "Quatipuru",
+      "renda_pc": 471.75,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506559",
+      "nm_mun": "Santa Luzia do Pará",
+      "renda_pc": 470.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503754",
+      "nm_mun": "Jacareacanga",
+      "renda_pc": 470.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504703",
+      "nm_mun": "Moju",
+      "renda_pc": 468.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505007",
+      "nm_mun": "Nova Timboteua",
+      "renda_pc": 466.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505304",
+      "nm_mun": "Oriximiná",
+      "renda_pc": 453.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506104",
+      "nm_mun": "Primavera",
+      "renda_pc": 450.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504604",
+      "nm_mun": "Mocajuba",
+      "renda_pc": 450.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503507",
+      "nm_mun": "Irituia",
+      "renda_pc": 450.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504802",
+      "nm_mun": "Monte Alegre",
+      "renda_pc": 450.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503002",
+      "nm_mun": "Faro",
+      "renda_pc": 450.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504307",
+      "nm_mun": "Maracanã",
+      "renda_pc": 440.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503309",
+      "nm_mun": "Igarapé-Miri",
+      "renda_pc": 433.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505403",
+      "nm_mun": "Ourém",
+      "renda_pc": 433.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507805",
+      "nm_mun": "Senador José Porfírio",
+      "renda_pc": 428.57,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507474",
+      "nm_mun": "São João de Pirabas",
+      "renda_pc": 428.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503077",
+      "nm_mun": "Garrafão do Norte",
+      "renda_pc": 425.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503101",
+      "nm_mun": "Gurupá",
+      "renda_pc": 420.4,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503903",
+      "nm_mun": "Juruti",
+      "renda_pc": 414.29,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506401",
+      "nm_mun": "Santa Cruz do Arari",
+      "renda_pc": 406.75,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504109",
+      "nm_mun": "Magalhães Barata",
+      "renda_pc": 404.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502608",
+      "nm_mun": "Colares",
+      "renda_pc": 404.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505106",
+      "nm_mun": "Óbidos",
+      "renda_pc": 404.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500958",
+      "nm_mun": "Aurora do Pará",
+      "renda_pc": 403.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507466",
+      "nm_mun": "São João da Ponta",
+      "renda_pc": 403.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1503457",
+      "nm_mun": "Ipixuna do Pará",
+      "renda_pc": 403.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506302",
+      "nm_mun": "Salvaterra",
+      "renda_pc": 403.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504406",
+      "nm_mun": "Marapanim",
+      "renda_pc": 400.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501956",
+      "nm_mun": "Cachoeira do Piriá",
+      "renda_pc": 400.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502905",
+      "nm_mun": "Curuçá",
+      "renda_pc": 400.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502103",
+      "nm_mun": "Cametá",
+      "renda_pc": 400.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507102",
+      "nm_mun": "São Caetano de Odivelas",
+      "renda_pc": 400.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500404",
+      "nm_mun": "Alenquer",
+      "renda_pc": 400.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508035",
+      "nm_mun": "Tracuateua",
+      "renda_pc": 395.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502855",
+      "nm_mun": "Curuá",
+      "renda_pc": 394.17,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501907",
+      "nm_mun": "Bujaru",
+      "renda_pc": 387.5,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501808",
+      "nm_mun": "Breves",
+      "renda_pc": 375.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500206",
+      "nm_mun": "Acará",
+      "renda_pc": 375.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507706",
+      "nm_mun": "São Sebastião da Boa Vista",
+      "renda_pc": 366.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502509",
+      "nm_mun": "Chaves",
+      "renda_pc": 366.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505700",
+      "nm_mun": "Ponta de Pedras",
+      "renda_pc": 362.4,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1507201",
+      "nm_mun": "São Domingos do Capim",
+      "renda_pc": 362.4,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504950",
+      "nm_mun": "Nova Esperança do Piriá",
+      "renda_pc": 350.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504901",
+      "nm_mun": "Muaná",
+      "renda_pc": 350.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502004",
+      "nm_mun": "Cachoeira do Arari",
+      "renda_pc": 349.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1508308",
+      "nm_mun": "Viseu",
+      "renda_pc": 341.67,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500305",
+      "nm_mun": "Afuá",
+      "renda_pc": 333.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501204",
+      "nm_mun": "Baião",
+      "renda_pc": 316.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505809",
+      "nm_mun": "Portel",
+      "renda_pc": 316.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505908",
+      "nm_mun": "Porto de Moz",
+      "renda_pc": 316.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500701",
+      "nm_mun": "Anajás",
+      "renda_pc": 305.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501006",
+      "nm_mun": "Aveiro",
+      "renda_pc": 303.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1506005",
+      "nm_mun": "Prainha",
+      "renda_pc": 302.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1505205",
+      "nm_mun": "Oeiras do Pará",
+      "renda_pc": 301.09,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1500909",
+      "nm_mun": "Augusto Corrêa",
+      "renda_pc": 300.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504000",
+      "nm_mun": "Limoeiro do Ajuru",
+      "renda_pc": 300.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1502806",
+      "nm_mun": "Curralinho",
+      "renda_pc": 262.5,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1504505",
+      "nm_mun": "Melgaço",
+      "renda_pc": 250.0,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    },
+    {
+      "cd_mun": "1501105",
+      "nm_mun": "Bagre",
+      "renda_pc": 233.33,
+      "fonte_renda": "IBGE_Censo_2022_SIDRA_10295_v13534",
+      "ano_ref_renda": 2022
+    }
+  ],
+  "dicionario_dados": [
+    {
+      "coluna": "cd_mun",
+      "desc": "Código IBGE do município (7 dígitos)",
+      "unidade": "Texto",
+      "fonte": "IBGE Localidades",
+      "temp": "Estática",
+      "defasagem": "Nenhuma"
+    },
+    {
+      "coluna": "nm_mun",
+      "desc": "Nome oficial do município",
+      "unidade": "Texto",
+      "fonte": "IBGE Localidades",
+      "temp": "Estática",
+      "defasagem": "Nenhuma"
+    },
+    {
+      "coluna": "mes",
+      "desc": "Ano e mês de referência (AAAA-MM)",
+      "unidade": "Texto",
+      "fonte": "APHIM",
+      "temp": "Mensal",
+      "defasagem": "Nenhuma"
+    },
+    {
+      "coluna": "ano",
+      "desc": "Ano civil",
+      "unidade": "Ano",
+      "fonte": "APHIM",
+      "temp": "Anual",
+      "defasagem": "Nenhuma"
+    },
+    {
+      "coluna": "mes_num",
+      "desc": "Mês do calendário (1 a 12)",
+      "unidade": "Mês",
+      "fonte": "APHIM",
+      "temp": "Mensal",
+      "defasagem": "Nenhuma"
+    },
+    {
+      "coluna": "area_km2",
+      "desc": "Área oficial calculada (EPSG:5880)",
+      "unidade": "km²",
+      "fonte": "IBGE (Malha 2024)",
+      "temp": "Estática",
+      "defasagem": "Nenhuma"
+    },
+    {
+      "coluna": "focos_count",
+      "desc": "Focos de calor em vegetação (confiança não-baixa)",
+      "unidade": "Contagem",
+      "fonte": "NASA FIRMS (VIIRS 375m)",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "focos_por_km2",
+      "desc": "Densidade de queimadas por área municipal",
+      "unidade": "focos/km²",
+      "fonte": "APHIM",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "t2m_media_c",
+      "desc": "Temperatura média do ar a 2m",
+      "unidade": "°C",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "t2m_max_c",
+      "desc": "Temperatura máxima do ar a 2m",
+      "unidade": "°C",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "t2m_min_c",
+      "desc": "Temperatura mínima do ar a 2m",
+      "unidade": "°C",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "td2m_c",
+      "desc": "Ponto de orvalho a 2m",
+      "unidade": "°C",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "prec_mm",
+      "desc": "Precipitação pluviométrica acumulada",
+      "unidade": "mm",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "prec_extremo",
+      "desc": "Chuva extrema (prec_mm > 1000 mm)",
+      "unidade": "Booleano",
+      "fonte": "APHIM / ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "lst_c",
+      "desc": "Temperatura de superfície (LST)",
+      "unidade": "°C",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "umid_solo",
+      "desc": "Umidade volumétrica do solo (0-7cm)",
+      "unidade": "m³/m³",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "vento_ms",
+      "desc": "Velocidade do vento a 10m",
+      "unidade": "m/s",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "ur_pct",
+      "desc": "Umidade relativa do ar (Magnus)",
+      "unidade": "%",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "dpv_kpa",
+      "desc": "Déficit de pressão de vapor (Magnus)",
+      "unidade": "kPa",
+      "fonte": "ECMWF ERA5-Land",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "rf_inpe_media",
+      "desc": "Média zonal do risco de fogo",
+      "unidade": "[0, 1]",
+      "fonte": "INPE BDQueimadas",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "rf_inpe_max",
+      "desc": "Máximo zonal do risco de fogo",
+      "unidade": "[0, 1]",
+      "fonte": "INPE BDQueimadas",
+      "temp": "Mensal",
+      "defasagem": "t0"
+    },
+    {
+      "coluna": "ano_mapbiomas",
+      "desc": "Ano do uso do solo aplicado (ano - 1)",
+      "unidade": "Ano",
+      "fonte": "MapBiomas Col. 10",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "pct_floresta",
+      "desc": "Percentual de floresta",
+      "unidade": "%",
+      "fonte": "MapBiomas Col. 10",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "pct_pastagem",
+      "desc": "Percentual de pastagem",
+      "unidade": "%",
+      "fonte": "MapBiomas Col. 10",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "pct_agricultura",
+      "desc": "Percentual de agricultura",
+      "unidade": "%",
+      "fonte": "MapBiomas Col. 10",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "pct_veg_nativa",
+      "desc": "Vegetação nativa total",
+      "unidade": "%",
+      "fonte": "MapBiomas Col. 10",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "pct_antropico",
+      "desc": "Uso antrópico total",
+      "unidade": "%",
+      "fonte": "MapBiomas Col. 10",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "ano_prodes",
+      "desc": "Ano PRODES aplicado (ano - 1, fecha 31/jul)",
+      "unidade": "Ano PRODES",
+      "fonte": "INPE TerraBrasilis",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "desmat_km2_prodes",
+      "desc": "Desmatamento anual em km²",
+      "unidade": "km²",
+      "fonte": "INPE TerraBrasilis",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "desmat_pct_area_prodes",
+      "desc": "Taxa de desmatamento sobre a área do município",
+      "unidade": "%",
+      "fonte": "INPE TerraBrasilis",
+      "temp": "Anual",
+      "defasagem": "t-1"
+    },
+    {
+      "coluna": "renda_pc",
+      "desc": "Rendimento domiciliar mediano per capita",
+      "unidade": "R$",
+      "fonte": "IBGE Censo 2022 (Tab. 10295)",
+      "temp": "Estática (2022)",
+      "defasagem": "Nenhuma"
+    },
+    {
+      "coluna": "fonte_renda",
+      "desc": "Identificador da pesquisa censitária",
+      "unidade": "Texto",
+      "fonte": "IBGE SIDRA",
+      "temp": "Estática (2022)",
+      "defasagem": "Nenhuma"
+    },
+    {
+      "coluna": "ano_ref_renda",
+      "desc": "Ano censitário da renda (2022)",
+      "unidade": "Inteiro",
+      "fonte": "IBGE Censo 2022",
+      "temp": "Estática (2022)",
+      "defasagem": "Nenhuma"
+    }
+  ],
+  "amostra_tabela_final": [
+    {
+      "cd_mun": "1500107",
+      "nm_mun": "Abaetetuba",
+      "mes": "2025-08",
+      "focos_count": 15,
+      "focos_por_km2": 0.009276,
+      "prec_mm": 84.955596633651,
+      "t2m_media_c": 26.707024895064194,
+      "rf_inpe_media": 0.0197,
+      "pct_floresta": 62.0188,
+      "pct_pastagem": 5.8834,
+      "desmat_km2_prodes": 0.5719,
+      "renda_pc": 537.33
+    },
+    {
+      "cd_mun": "1500131",
+      "nm_mun": "Abel Figueiredo",
+      "mes": "2025-08",
+      "focos_count": 3,
+      "focos_por_km2": 0.004863,
+      "prec_mm": 15.395171149750878,
+      "t2m_media_c": 27.774559091057142,
+      "rf_inpe_media": 0.7823,
+      "pct_floresta": 21.9106,
+      "pct_pastagem": 73.6442,
+      "desmat_km2_prodes": 0.1757,
+      "renda_pc": 628.0
+    },
+    {
+      "cd_mun": "1500206",
+      "nm_mun": "Acará",
+      "mes": "2025-08",
+      "focos_count": 84,
+      "focos_por_km2": 0.019243,
+      "prec_mm": 64.85284109967066,
+      "t2m_media_c": 26.45607633524071,
+      "rf_inpe_media": 0.119,
+      "pct_floresta": 67.7387,
+      "pct_pastagem": 20.9367,
+      "desmat_km2_prodes": 12.6669,
+      "renda_pc": 375.0
+    },
+    {
+      "cd_mun": "1500305",
+      "nm_mun": "Afuá",
+      "mes": "2025-08",
+      "focos_count": 2,
+      "focos_por_km2": 0.000239,
+      "prec_mm": 141.5598274804655,
+      "t2m_media_c": 26.634849454726975,
+      "rf_inpe_media": 0.0076,
+      "pct_floresta": 64.9378,
+      "pct_pastagem": 0.0652,
+      "desmat_km2_prodes": 0.6009,
+      "renda_pc": 333.33
+    },
+    {
+      "cd_mun": "1500347",
+      "nm_mun": "Água Azul do Norte",
+      "mes": "2025-08",
+      "focos_count": 21,
+      "focos_por_km2": 0.002946,
+      "prec_mm": 11.197126379665727,
+      "t2m_media_c": 27.568467785932228,
+      "rf_inpe_media": 0.6968,
+      "pct_floresta": 39.4601,
+      "pct_pastagem": 59.0616,
+      "desmat_km2_prodes": 3.7142,
+      "renda_pc": 756.0
+    },
+    {
+      "cd_mun": "1500404",
+      "nm_mun": "Alenquer",
+      "mes": "2025-08",
+      "focos_count": 31,
+      "focos_por_km2": 0.001311,
+      "prec_mm": 68.91536338647194,
+      "t2m_media_c": 25.456009303842848,
+      "rf_inpe_media": 0.1154,
+      "pct_floresta": 86.7374,
+      "pct_pastagem": 8.2886,
+      "desmat_km2_prodes": 34.9486,
+      "renda_pc": 400.0
+    },
+    {
+      "cd_mun": "1500503",
+      "nm_mun": "Almeirim",
+      "mes": "2025-08",
+      "focos_count": 7,
+      "focos_por_km2": 9.6e-05,
+      "prec_mm": 136.8757956550201,
+      "t2m_media_c": 25.125108193181973,
+      "rf_inpe_media": 0.0232,
+      "pct_floresta": 95.4044,
+      "pct_pastagem": 0.888,
+      "desmat_km2_prodes": 44.3487,
+      "renda_pc": 487.5
+    },
+    {
+      "cd_mun": "1500602",
+      "nm_mun": "Altamira",
+      "mes": "2025-08",
+      "focos_count": 869,
+      "focos_por_km2": 0.005447,
+      "prec_mm": 10.35076232643973,
+      "t2m_media_c": 28.156084360911507,
+      "rf_inpe_media": 0.6058,
+      "pct_floresta": 90.5694,
+      "pct_pastagem": 6.8685,
+      "desmat_km2_prodes": 166.8414,
+      "renda_pc": 808.0
+    },
+    {
+      "cd_mun": "1500701",
+      "nm_mun": "Anajás",
+      "mes": "2025-08",
+      "focos_count": 3,
+      "focos_por_km2": 0.000433,
+      "prec_mm": 141.00507782634097,
+      "t2m_media_c": 26.04958340834162,
+      "rf_inpe_media": 0.0033,
+      "pct_floresta": 96.725,
+      "pct_pastagem": 0.0282,
+      "desmat_km2_prodes": 0.1479,
+      "renda_pc": 305.0
+    },
+    {
+      "cd_mun": "1500800",
+      "nm_mun": "Ananindeua",
+      "mes": "2025-08",
+      "focos_count": 0,
+      "focos_por_km2": 0.0,
+      "prec_mm": 106.77313999965233,
+      "t2m_media_c": 26.58476810770418,
+      "rf_inpe_media": 0.0076,
+      "pct_floresta": 52.8233,
+      "pct_pastagem": 3.0507,
+      "desmat_km2_prodes": 0.0,
+      "renda_pc": 806.0
+    },
+    {
+      "cd_mun": "1500859",
+      "nm_mun": "Anapu",
+      "mes": "2025-08",
+      "focos_count": 10,
+      "focos_por_km2": 0.00084,
+      "prec_mm": 32.972315504500415,
+      "t2m_media_c": 27.319172062909672,
+      "rf_inpe_media": 0.3567,
+      "pct_floresta": 73.1443,
+      "pct_pastagem": 25.1776,
+      "desmat_km2_prodes": 56.9877,
+      "renda_pc": 500.0
+    },
+    {
+      "cd_mun": "1500909",
+      "nm_mun": "Augusto Corrêa",
+      "mes": "2025-08",
+      "focos_count": 6,
+      "focos_por_km2": 0.005411,
+      "prec_mm": 82.52419191107239,
+      "t2m_media_c": 26.376172878571253,
+      "rf_inpe_media": 0.1474,
+      "pct_floresta": 73.2683,
+      "pct_pastagem": 19.0716,
+      "desmat_km2_prodes": 0.0,
+      "renda_pc": 300.0
+    },
+    {
+      "cd_mun": "1500958",
+      "nm_mun": "Aurora do Pará",
+      "mes": "2025-08",
+      "focos_count": 64,
+      "focos_por_km2": 0.035113,
+      "prec_mm": 41.64283321563025,
+      "t2m_media_c": 26.69687010783474,
+      "rf_inpe_media": 0.3609,
+      "pct_floresta": 35.1897,
+      "pct_pastagem": 61.5957,
+      "desmat_km2_prodes": 4.9394,
+      "renda_pc": 403.0
+    },
+    {
+      "cd_mun": "1501006",
+      "nm_mun": "Aveiro",
+      "mes": "2025-08",
+      "focos_count": 65,
+      "focos_por_km2": 0.003804,
+      "prec_mm": 65.73678813440982,
+      "t2m_media_c": 27.057878063375767,
+      "rf_inpe_media": 0.2565,
+      "pct_floresta": 90.185,
+      "pct_pastagem": 5.4117,
+      "desmat_km2_prodes": 51.5031,
+      "renda_pc": 303.0
+    },
+    {
+      "cd_mun": "1501105",
+      "nm_mun": "Bagre",
+      "mes": "2025-08",
+      "focos_count": 2,
+      "focos_por_km2": 0.000454,
+      "prec_mm": 82.35724590831914,
+      "t2m_media_c": 26.63522403920075,
+      "rf_inpe_media": 0.075,
+      "pct_floresta": 91.6919,
+      "pct_pastagem": 1.8811,
+      "desmat_km2_prodes": 9.0192,
+      "renda_pc": 233.33
+    },
+    {
+      "cd_mun": "1501204",
+      "nm_mun": "Baião",
+      "mes": "2025-08",
+      "focos_count": 15,
+      "focos_por_km2": 0.003978,
+      "prec_mm": 52.17093238621468,
+      "t2m_media_c": 27.068172851436714,
+      "rf_inpe_media": 0.3668,
+      "pct_floresta": 68.4059,
+      "pct_pastagem": 22.8576,
+      "desmat_km2_prodes": 8.2586,
+      "renda_pc": 316.0
+    },
+    {
+      "cd_mun": "1501253",
+      "nm_mun": "Bannach",
+      "mes": "2025-08",
+      "focos_count": 40,
+      "focos_por_km2": 0.013506,
+      "prec_mm": 3.9041622294965825,
+      "t2m_media_c": 28.191093237595226,
+      "rf_inpe_media": 0.9416,
+      "pct_floresta": 31.2416,
+      "pct_pastagem": 65.901,
+      "desmat_km2_prodes": 0.4285,
+      "renda_pc": 666.67
+    },
+    {
+      "cd_mun": "1501303",
+      "nm_mun": "Barcarena",
+      "mes": "2025-08",
+      "focos_count": 6,
+      "focos_por_km2": 0.004559,
+      "prec_mm": 72.40694513572366,
+      "t2m_media_c": 26.76718367951179,
+      "rf_inpe_media": 0.0117,
+      "pct_floresta": 48.6163,
+      "pct_pastagem": 7.2434,
+      "desmat_km2_prodes": 0.9242,
+      "renda_pc": 666.67
+    },
+    {
+      "cd_mun": "1501402",
+      "nm_mun": "Belém",
+      "mes": "2025-08",
+      "focos_count": 0,
+      "focos_por_km2": 0.0,
+      "prec_mm": 91.8047684052938,
+      "t2m_media_c": 26.70082266067749,
+      "rf_inpe_media": 0.009,
+      "pct_floresta": 29.0399,
+      "pct_pastagem": 3.2629,
+      "desmat_km2_prodes": 0.0828,
+      "renda_pc": 842.4
+    },
+    {
+      "cd_mun": "1501451",
+      "nm_mun": "Belterra",
+      "mes": "2025-08",
+      "focos_count": 5,
+      "focos_por_km2": 0.001137,
+      "prec_mm": 82.29580056248535,
+      "t2m_media_c": 27.164802838138485,
+      "rf_inpe_media": 0.2028,
+      "pct_floresta": 72.1248,
+      "pct_pastagem": 7.7459,
+      "desmat_km2_prodes": 5.6907,
+      "renda_pc": 500.0
+    }
+  ]
+}

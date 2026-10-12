@@ -1,0 +1,65 @@
+# ==============================================================================
+# Gitignore - Projeto APHIM
+# ==============================================================================
+
+# Segredos e Variáveis de Ambiente (CRÍTICO: nunca versionar chaves privadas)
+.env
+*.env
+.env.*
+!.env.example
+APP/.env
+**/auth_state.json
+
+# Dados Brutos e Intermediários Volumosos (Arquivos pesados e TIFs de satélite)
+APP/data/raw/*
+!APP/data/raw/.gitkeep
+APP/data/interim/*
+!APP/data/interim/.gitkeep
+**/data/raw/*
+**/data/interim/*
+*.tif
+*.tiff
+*.zip
+
+# Logs
+logs/
+*.log
+APP/logs/*
+!APP/logs/.gitkeep
+
+# Python / Ambientes Virtuais
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Frontend / Dashboard
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dashboard/dist/
+
+# Scratch & Temporários
+APP/scratch/
+**/scratch/
+gemini-code-*
+*.tmp
+*.temp
+
+# IDEs & Sistema Operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
