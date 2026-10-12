@@ -37,6 +37,11 @@ import yaml
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from src.utils.logger import setup_logger
+from src.utils.metricas_priorizacao import (
+    avaliar_metodo_mensal,
+    adicionar_captura_star_15,
+    gerar_tabela_resumo
+)
 
 logger = setup_logger("processamento_02_baselines")
 
@@ -93,84 +98,22 @@ def executar_baselines():
     # para permitir o cálculo contínuo da rotatividade no primeiro mês de teste (2024-01)
     df_prev_baseline = df_mod[df_mod["mes_alvo"] == "2023-12"].copy()
 
-    # 4. Cálculo mensal das métricas por baseline
-    logger.info("Executando simulação de rankings e cálculo das métricas de priorização...")
-    k_valores = [10, 15, 20, 25, 30]
-    registros_mensais = []
-
+    # 4. Cálculo mensal das métricas por baseline utilizando módulo compartilhado
+    logger.info("Executando simulação de rankings e cálculo das métricas de priorização via metricas_priorizacao...")
+    dfs_metodos = []
     for nome_baseline, col_score in baselines.items():
-        # Calcular o top-15 de referência em 2023-12 para ancoragem da rotatividade
-        prev_top15 = None
-        if len(df_prev_baseline) == 144:
-            df_prev_sorted = df_prev_baseline.sort_values(
-                by=[col_score, "cd_mun"],
-                ascending=[False, True]
-            )
-            prev_top15 = set(df_prev_sorted.iloc[:15]["cd_mun"])
+        df_m = avaliar_metodo_mensal(
+            df_periodo=df_teste,
+            col_score=col_score,
+            nome_metodo=nome_baseline,
+            df_ancora=df_prev_baseline
+        )
+        dfs_metodos.append(df_m)
 
-        for mes_alvo in meses_alvo_teste:
-            sub = df_teste[df_teste["mes_alvo"] == mes_alvo].copy()
-            if len(sub) != 144:
-                raise ValueError(f"Mês alvo {mes_alvo} possui {len(sub)} municípios (esperado 144).")
+    df_mensal = pd.concat(dfs_metodos, ignore_index=True)
+    df_mensal = df_mensal.rename(columns={"metodo": "baseline"})
+    df_mensal = adicionar_captura_star_15(df_mensal, col_metodo="baseline", nome_oraculo="oraculo")
 
-            total_y = float(sub["y"].sum())
-            total_y_pond = float((sub["y"] * sub["pct_floresta"] / 100.0).sum())
-
-            # Ordenação do ranking: score decrescente, desempate por cd_mun crescente
-            sub_sorted = sub.sort_values(
-                by=[col_score, "cd_mun"],
-                ascending=[False, True]
-            ).reset_index(drop=True)
-
-            top15_muns = set(sub_sorted.iloc[:15]["cd_mun"])
-
-            # Rotatividade
-            if prev_top15 is not None:
-                novos_no_top15 = len(top15_muns - prev_top15)
-                rotatividade = novos_no_top15 / 15.0
-            else:
-                rotatividade = np.nan
-            prev_top15 = top15_muns
-
-            # Captura@k
-            caps = {}
-            for k in k_valores:
-                soma_k = sub_sorted.iloc[:k]["y"].sum()
-                caps[f"captura_{k}"] = float(soma_k / total_y) if total_y > 0 else 0.0
-
-            # Captura ponderada@15
-            soma_pond_15 = (sub_sorted.iloc[:15]["y"] * sub_sorted.iloc[:15]["pct_floresta"] / 100.0).sum()
-            cap_pond_15 = float(soma_pond_15 / total_y_pond) if total_y_pond > 0 else 0.0
-
-            # Spearman entre o ranking/score do método e o alvo real y
-            sp_stat = spearmanr(sub_sorted[col_score], sub_sorted["y"]).statistic
-            if np.isnan(sp_stat):
-                sp_stat = 0.0
-
-            reg = {
-                "baseline": nome_baseline,
-                "mes_alvo": mes_alvo,
-                "captura_10": caps["captura_10"],
-                "captura_15": caps["captura_15"],
-                "captura_20": caps["captura_20"],
-                "captura_25": caps["captura_25"],
-                "captura_30": caps["captura_30"],
-                "captura_pond_15": cap_pond_15,
-                "spearman": float(sp_stat),
-                "rotatividade": float(rotatividade)
-            }
-            registros_mensais.append(reg)
-
-    df_mensal = pd.DataFrame(registros_mensais)
-
-    # 5. Cálculo do Captura*@15(τ) = Captura@15(método) / Captura@15(oraculo)
-    oraculo_caps = df_mensal[df_mensal["baseline"] == "oraculo"].set_index("mes_alvo")["captura_15"].to_dict()
-    df_mensal["captura_star_15"] = df_mensal.apply(
-        lambda r: float(r["captura_15"] / oraculo_caps[r["mes_alvo"]]) if oraculo_caps.get(r["mes_alvo"], 0) > 0 else 0.0,
-        axis=1
-    )
-
-    # Reordenar colunas de df_mensal
     colunas_mensal = [
         "baseline", "mes_alvo",
         "captura_10", "captura_15", "captura_20", "captura_25", "captura_30",
@@ -179,27 +122,16 @@ def executar_baselines():
     ]
     df_mensal = df_mensal[colunas_mensal].sort_values(["baseline", "mes_alvo"]).reset_index(drop=True)
 
-    # 6. Tabela Resumo (Média dos 24 meses + Estação Seca)
+    # 5. Tabela Resumo (Média dos 24 meses + Estação Seca)
     logger.info("Consolidando tabela resumo com médias de 24 meses e estação seca...")
-    metricas_resumo = [
-        "captura_10", "captura_15", "captura_20", "captura_25", "captura_30",
-        "captura_star_15", "captura_pond_15",
-        "spearman", "rotatividade"
-    ]
-    df_resumo = df_mensal.groupby("baseline")[metricas_resumo].mean().reset_index()
-
-    # Estação Seca: meses alvo de julho a novembro ('07', '08', '09', '10', '11')
     meses_seca = [m for m in meses_alvo_teste if m[5:7] in ["07", "08", "09", "10", "11"]]
-    logger.info(f"Meses da estação seca considerados ({len(meses_seca)} meses): {meses_seca}")
-    df_seca = df_mensal[df_mensal["mes_alvo"].isin(meses_seca)]
-    resumo_seca = df_seca.groupby("baseline")["captura_15"].mean().rename("captura_15_seca")
-
-    df_resumo = df_resumo.merge(resumo_seca, on="baseline", how="left")
-
-    # Ordenação canônica das linhas do resumo
     ordem_baselines = ["oraculo", "climatologia_focos", "persistencia", "historico_fixo", "rf_inpe"]
-    df_resumo["ordem"] = df_resumo["baseline"].map(lambda b: ordem_baselines.index(b) if b in ordem_baselines else 99)
-    df_resumo = df_resumo.sort_values("ordem").drop(columns=["ordem"]).reset_index(drop=True)
+    df_resumo = gerar_tabela_resumo(
+        df_mensal=df_mensal,
+        col_metodo="baseline",
+        meses_seca=meses_seca,
+        ordem_metodos=ordem_baselines
+    )
 
     # 7. Exportar saídas
     out_mensal = resultados_dir / "baselines_mensal.csv"

@@ -1,0 +1,36 @@
+{
+  "glm_A": {
+    "alpha": 1.0
+  },
+  "glm_C": {
+    "alpha": 0.1
+  },
+  "rf_A": {
+    "n_estimators": 500,
+    "max_depth": 10,
+    "min_samples_leaf": 20,
+    "max_features": 0.5
+  },
+  "rf_C": {
+    "n_estimators": 500,
+    "max_depth": null,
+    "min_samples_leaf": 20,
+    "max_features": 0.5
+  },
+  "xgb_A": {
+    "n_estimators": 300,
+    "learning_rate": 0.03,
+    "max_depth": 5,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 1
+  },
+  "xgb_C": {
+    "n_estimators": 300,
+    "learning_rate": 0.03,
+    "max_depth": 5,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 1
+  }
+}
