@@ -295,7 +295,7 @@
 | 21 | `rf_inpe_max` | Máximo zonal do Risco de Fogo meteorológico do INPE | Adimensional [0, 1] | INPE BDQueimadas | Mensal | $t_0$ |
 | 22 | `ano_mapbiomas` | Ano de referência do MapBiomas empregado na linha | Ano | MapBiomas | Anual | Defasagem $t-1$ |
 | 23 | `area_km2_mapbiomas`| Área total classificada pelo MapBiomas | km² | MapBiomas Col. 10 | Anual | Defasagem $t-1$ |
-| 24 | `pct_floresta` | Percentual de cobertura de formação florestal e savânica arbórea | % | MapBiomas Col. 10 | Anual | Defasagem $t-1$ |
+| 24 | `pct_floresta` | Percentual de formação florestal, mangue, floresta alagável e restinga arbórea (classes MapBiomas 3, 5, 6 e 49; a savana está em `pct_savana`) | % | MapBiomas Col. 10 | Anual | Defasagem $t-1$ |
 | 25 | `pct_savana` | Percentual de formação savânica | % | MapBiomas Col. 10 | Anual | Defasagem $t-1$ |
 | 26 | `pct_campo_natural` | Percentual de campos naturais, áreas alagáveis e apicuns | % | MapBiomas Col. 10 | Anual | Defasagem $t-1$ |
 | 27 | `pct_pastagem` | Percentual de áreas de pastagem plantada | % | MapBiomas Col. 10 | Anual | Defasagem $t-1$ |

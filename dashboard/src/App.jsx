@@ -157,7 +157,7 @@ function App() {
             <TerritorialDistributionCard onViewData={() => setActiveTab('municipios')} />
 
             {/* Coluna 2: Top Pages Style (Tabela de Municípios & Badges de Risco) */}
-            <TopMunicipiosRiskCard onViewAll={() => setActiveTab('municipios')} />
+            <TopMunicipiosRiskCard ranking={ranking_municipios} onViewAll={() => setActiveTab('municipios')} />
           </div>
 
           {/* Análises Complementares: Totais Anuais & Sazonalidade */}
