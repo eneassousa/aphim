@@ -642,6 +642,11 @@ def avaliar_no_teste(
 
     df_mensal_vencedor = pd.DataFrame(registros_mensais)
 
+    # Salvar predições de teste do modelo vencedor
+    out_preds_vencedor = processed_dir / "resultados" / "features_v2_predicoes_teste.parquet"
+    df_teste[["cd_mun", "mes_emissao", "mes_alvo", "y", "pred_vencedor"]].to_parquet(out_preds_vencedor, index=False)
+    logger.info(f"Predições de teste do modelo vencedor salvas em '{out_preds_vencedor}'.")
+
     # Carregar previsões salvas de teste da etapa 5 e baselines para comparação
     preds_e5_path = processed_dir / "resultados" / "perigo_predicoes_teste.parquet"
     base_mensal_path = processed_dir / "resultados" / "baselines_mensal.csv"

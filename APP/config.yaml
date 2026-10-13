@@ -62,3 +62,25 @@ prodes:
   ano_inicio: 2018
   ano_fim: 2025
   uf_sigla: "PA"
+
+multicriterio:
+  nivel_1:
+    perigo: 0.5
+    vulnerabilidade: 0.5
+  nivel_2_saaty:
+    criterios:
+      - "desmat_pct_area_prodes"
+      - "pct_floresta"
+      - "renda_pc"
+    matriz:
+      - [1.0, 2.0, 2.0]
+      - [0.5, 1.0, 1.0]
+      - [0.5, 1.0, 1.0]
+  electre:
+    quantis_perfis: [0.50, 0.75, 0.90]
+    classes: ["Baixo", "Moderado", "Alto", "Critico"]
+    indiferenca_pct_amplitude: 0.05
+    preferencia_pct_amplitude: 0.15
+    corte_lambda: 0.75
+    atribuicao: "pessimista"
+
