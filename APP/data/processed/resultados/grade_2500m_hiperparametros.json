@@ -1,0 +1,204 @@
+{
+  "tamanho_m": 2500,
+  "melhores_parametros": {
+    "max_depth": 6,
+    "learning_rate": 0.05,
+    "n_estimators": 300,
+    "min_child_weight": 1
+  },
+  "melhor_score_validacao": 0.5007795358796803,
+  "todas_combinacoes": [
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "n_estimators": 300,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.48947014075505385,
+      "score_2023": 0.4993031920829567,
+      "score_medio": 0.4943866664190053,
+      "tempo_s": 43.23
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "n_estimators": 300,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4891402070724547,
+      "score_2023": 0.49933491201685937,
+      "score_medio": 0.49423755954465703,
+      "tempo_s": 42.46
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "n_estimators": 600,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.4879688944920924,
+      "score_2023": 0.5034721708009439,
+      "score_medio": 0.49572053264651816,
+      "tempo_s": 79.3
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "n_estimators": 600,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4907972191747488,
+      "score_2023": 0.5032586696572733,
+      "score_medio": 0.49702794441601106,
+      "tempo_s": 80.88
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "n_estimators": 300,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.4914591969551873,
+      "score_2023": 0.5004588934269175,
+      "score_medio": 0.4959590451910524,
+      "tempo_s": 43.29
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "n_estimators": 300,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4918346748525302,
+      "score_2023": 0.501522052692302,
+      "score_medio": 0.4966783637724161,
+      "tempo_s": 59.1
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "n_estimators": 600,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.48959126046653617,
+      "score_2023": 0.50401545044163,
+      "score_medio": 0.49680335545408305,
+      "tempo_s": 79.18
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "n_estimators": 600,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.49366359898523887,
+      "score_2023": 0.5042994673314803,
+      "score_medio": 0.4989815331583596,
+      "tempo_s": 81.63
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 300,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.4965241508281546,
+      "score_2023": 0.505034920931206,
+      "score_medio": 0.5007795358796803,
+      "tempo_s": 50.22
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 300,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4954526421163113,
+      "score_2023": 0.504634774648075,
+      "score_medio": 0.5000437083821931,
+      "tempo_s": 52.08
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 600,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.496750433520398,
+      "score_2023": 0.5035967467341892,
+      "score_medio": 0.5001735901272936,
+      "tempo_s": 98.42
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 600,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4945867826931302,
+      "score_2023": 0.5045077492851054,
+      "score_medio": 0.4995472659891178,
+      "tempo_s": 98.59
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "n_estimators": 300,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.49510583925296164,
+      "score_2023": 0.5060355703048752,
+      "score_medio": 0.5005707047789184,
+      "tempo_s": 49.14
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "n_estimators": 300,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4937363357715783,
+      "score_2023": 0.5031972312060845,
+      "score_medio": 0.49846678348883144,
+      "tempo_s": 52.6
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "n_estimators": 600,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.49074249955504223,
+      "score_2023": 0.4995101459943159,
+      "score_medio": 0.49512632277467905,
+      "tempo_s": 99.08
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "n_estimators": 600,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4925728586824278,
+      "score_2023": 0.4995430893290458,
+      "score_medio": 0.4960579740057368,
+      "tempo_s": 95.69
+    }
+  ]
+}

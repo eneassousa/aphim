@@ -119,10 +119,11 @@ def calcular_captura_area_mes(
 def validar_hiperparametros(
     df_treino: pd.DataFrame,
     cell_area_map: Dict[int, float]
-) -> Dict[str, any]:
+) -> Tuple[Dict[str, any], float, List[Dict[str, any]]]:
     """
     Executa busca em grade pequena de hiperparâmetros por validação temporal nas dobras 2022 e 2023.
     Critério: CapturaÁrea@10% média nos 15 municípios com mais focos observados em t.
+    Retorna: (melhor_params, melhor_score, todas_combinacoes).
     """
     logger.info("Iniciando sintonia de hiperparâmetros por validação temporal (dobras 2022 e 2023)...")
 
@@ -161,6 +162,7 @@ def validar_hiperparametros(
 
     melhor_score = -1.0
     melhor_params = None
+    todas_combinacoes = []
 
     for i, p in enumerate(grid_params):
         t0 = time.time()
@@ -182,7 +184,7 @@ def validar_hiperparametros(
         for m_alvo, grp in df_val_22.groupby("mes_alvo"):
             cap, _, _ = calcular_captura_area_mes(grp, "pred_val", top15_val_22[m_alvo], cell_area_map, 10.0)
             caps_22.append(cap)
-        score_22 = np.mean(caps_22)
+        score_22 = float(np.mean(caps_22))
 
         # 2. Dobra 2023
         m23 = xgb.XGBRegressor(
@@ -202,10 +204,18 @@ def validar_hiperparametros(
         for m_alvo, grp in df_val_23.groupby("mes_alvo"):
             cap, _, _ = calcular_captura_area_mes(grp, "pred_val", top15_val_23[m_alvo], cell_area_map, 10.0)
             caps_23.append(cap)
-        score_23 = np.mean(caps_23)
+        score_23 = float(np.mean(caps_23))
 
-        score_medio = (score_22 + score_23) / 2.0
+        score_medio = float((score_22 + score_23) / 2.0)
         elapsed = time.time() - t0
+
+        todas_combinacoes.append({
+            "parametros": p,
+            "score_2022": score_22,
+            "score_2023": score_23,
+            "score_medio": score_medio,
+            "tempo_s": round(elapsed, 2)
+        })
 
         logger.info(
             f"Combinação {i+1:02d}/{len(grid_params)}: {p} -> "
@@ -217,7 +227,7 @@ def validar_hiperparametros(
             melhor_params = p
 
     logger.info(f"Melhor hiperparâmetro selecionado: {melhor_params} com CapturaÁrea@10% média = {melhor_score*100:.2f}%.")
-    return melhor_params
+    return melhor_params, melhor_score, todas_combinacoes
 
 def avaliar_metodos_teste(
     df_teste: pd.DataFrame,
@@ -358,7 +368,8 @@ def avaliar_metodos_teste(
     xgb_caps = df_mensal[df_mensal["metodo"] == "xgboost"].set_index("mes_alvo")["captura_area_10"].loc[meses_alvo].values
     comparadores = {
         "persistencia_celula": df_mensal[df_mensal["metodo"] == "persistencia_celula"].set_index("mes_alvo")["captura_area_10"].loc[meses_alvo].values,
-        "climatologia_celula": df_mensal[df_mensal["metodo"] == "climatologia_celula"].set_index("mes_alvo")["captura_area_10"].loc[meses_alvo].values
+        "climatologia_celula": df_mensal[df_mensal["metodo"] == "climatologia_celula"].set_index("mes_alvo")["captura_area_10"].loc[meses_alvo].values,
+        "historico_fixo_celula": df_mensal[df_mensal["metodo"] == "historico_fixo_celula"].set_index("mes_alvo")["captura_area_10"].loc[meses_alvo].values
     }
 
     rng = np.random.RandomState(42)
@@ -610,7 +621,20 @@ def main():
     import gc
     gc.collect()
 
-    melhores_params = validar_hiperparametros(df_treino, cell_area_map)
+    t_val_start = time.time()
+    melhores_params, melhor_score, todas_comb = validar_hiperparametros(df_treino, cell_area_map)
+    t_val_elapsed = time.time() - t_val_start
+
+    # Salvar hiperparâmetros detalhados em JSON
+    out_hiper_json = resultados_dir / f"grade_{tamanho_str}m_hiperparametros.json"
+    with open(out_hiper_json, "w", encoding="utf-8") as f:
+        json.dump({
+            "tamanho_m": int(tamanho_m),
+            "melhores_parametros": melhores_params,
+            "melhor_score_validacao": melhor_score,
+            "todas_combinacoes": todas_comb
+        }, f, indent=2, ensure_ascii=False)
+    logger.info(f"Hiperparâmetros salvos com sucesso em '{out_hiper_json}'.")
 
     # 5. Treinar modelo XGBoost final em todo o conjunto de treino (2020 a 2023)
     logger.info("Treinando modelo XGBoost final em todas as linhas de treino...")
@@ -629,8 +653,9 @@ def main():
     t_train_elapsed = time.time() - t_train_start
     logger.info(f"Modelo final treinado com sucesso em {t_train_elapsed:.1f} segundos.")
 
-    # 6. Gerar predições de teste (2024-2025)
+    # 6. Gerar predições de teste (2024-2025) e avaliar
     logger.info("Gerando predições de teste para as células...")
+    t_eval_start = time.time()
     df_teste["pred_xgb"] = modelo_final.predict(df_teste[FEATURES_CELULA])
 
     # 7. Avaliação nos 24 meses de teste
@@ -640,6 +665,7 @@ def main():
         cell_area_map=cell_area_map,
         area_total_pa=area_total_pa
     )
+    t_eval_elapsed = time.time() - t_eval_start
 
     # 8. Salvar saídas CSV
     out_mensal_csv = resultados_dir / f"grade_{tamanho_str}m_mensal.csv"
@@ -650,6 +676,18 @@ def main():
     df_resumo.to_csv(out_resumo_csv, index=False, encoding="utf-8")
     df_testes.to_csv(out_testes_csv, index=False, encoding="utf-8")
 
+    # Salvar tempos em JSON
+    out_tempos_json = resultados_dir / f"grade_{tamanho_str}m_tempos.json"
+    tempos_dict = {
+        "tamanho_m": int(tamanho_m),
+        "tempo_validacao_s": round(t_val_elapsed, 2),
+        "tempo_treino_final_s": round(t_train_elapsed, 2),
+        "tempo_avaliacao_s": round(t_eval_elapsed, 2),
+        "tempo_total_s": round(time.time() - t_start, 2)
+    }
+    with open(out_tempos_json, "w", encoding="utf-8") as f:
+        json.dump(tempos_dict, f, indent=2, ensure_ascii=False)
+    logger.info(f"Tempos de execução salvos com sucesso em '{out_tempos_json}'.")
     logger.info(f"Tabelas salvas com sucesso em '{resultados_dir}'.")
 
     # 9. Gerar mapa de exemplo para Altamira em 2024-09

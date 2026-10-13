@@ -1,0 +1,204 @@
+{
+  "tamanho_m": 10000,
+  "melhores_parametros": {
+    "max_depth": 6,
+    "learning_rate": 0.05,
+    "n_estimators": 600,
+    "min_child_weight": 10
+  },
+  "melhor_score_validacao": 0.4677702440811068,
+  "todas_combinacoes": [
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "n_estimators": 300,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.4496412975270562,
+      "score_2023": 0.4704144850992548,
+      "score_medio": 0.4600278913131555,
+      "tempo_s": 3.38
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "n_estimators": 300,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4498572152497382,
+      "score_2023": 0.4694881302331299,
+      "score_medio": 0.4596726727414341,
+      "tempo_s": 3.42
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "n_estimators": 600,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.4496919312520567,
+      "score_2023": 0.47058517818759554,
+      "score_medio": 0.4601385547198261,
+      "tempo_s": 6.05
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "n_estimators": 600,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.44723460373378815,
+      "score_2023": 0.46817859066559664,
+      "score_medio": 0.4577065971996924,
+      "tempo_s": 5.61
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "n_estimators": 300,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.44944361570800234,
+      "score_2023": 0.4718815305629842,
+      "score_medio": 0.4606625731354933,
+      "tempo_s": 2.94
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "n_estimators": 300,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.44584912587392944,
+      "score_2023": 0.46851773009959535,
+      "score_medio": 0.45718342798676237,
+      "tempo_s": 3.15
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "n_estimators": 600,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.45293224373492974,
+      "score_2023": 0.46664052139869044,
+      "score_medio": 0.4597863825668101,
+      "tempo_s": 5.42
+    },
+    {
+      "parametros": {
+        "max_depth": 4,
+        "learning_rate": 0.1,
+        "n_estimators": 600,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4429651775573816,
+      "score_2023": 0.46565591737977385,
+      "score_medio": 0.4543105474685777,
+      "tempo_s": 5.43
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 300,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.45801978314039915,
+      "score_2023": 0.46726416774904417,
+      "score_medio": 0.46264197544472163,
+      "tempo_s": 3.61
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 300,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.460723795024981,
+      "score_2023": 0.46935945780493366,
+      "score_medio": 0.46504162641495733,
+      "tempo_s": 3.83
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 600,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.4579548986530512,
+      "score_2023": 0.47091715995351424,
+      "score_medio": 0.46443602930328276,
+      "tempo_s": 6.59
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 600,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4645656995523373,
+      "score_2023": 0.4709747886098763,
+      "score_medio": 0.4677702440811068,
+      "tempo_s": 6.02
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "n_estimators": 300,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.4584136221565607,
+      "score_2023": 0.4692683452166874,
+      "score_medio": 0.4638409836866241,
+      "tempo_s": 3.84
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "n_estimators": 300,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.46071610149229375,
+      "score_2023": 0.46887733230709094,
+      "score_medio": 0.4647967168996924,
+      "tempo_s": 4.01
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "n_estimators": 600,
+        "min_child_weight": 1
+      },
+      "score_2022": 0.4552430231794482,
+      "score_2023": 0.4697702542455366,
+      "score_medio": 0.4625066387124924,
+      "tempo_s": 6.21
+    },
+    {
+      "parametros": {
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "n_estimators": 600,
+        "min_child_weight": 10
+      },
+      "score_2022": 0.4562876477502789,
+      "score_2023": 0.47244586333362637,
+      "score_medio": 0.4643667555419526,
+      "tempo_s": 6.8
+    }
+  ]
+}
