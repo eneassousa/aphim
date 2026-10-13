@@ -30,7 +30,8 @@ def main():
         ("src.processamento.03_modelo_perigo", "Processamento 03 — Módulo de Perigo e Modelagem Preditiva"),
         ("src.processamento.03b_atributos_v2", "Processamento 03b — Rodada 2 de Atributos, Limpeza e Seleção"),
         ("src.processamento.04_excesso", "Processamento 04 — Análise de Excesso e Rankings de Anomalia"),
-        ("src.processamento.05_vulnerabilidade_electre", "Processamento 05 — Módulo de Vulnerabilidade e Fusão ELECTRE Tri-B")
+        ("src.processamento.05_vulnerabilidade_electre", "Processamento 05 — Módulo de Vulnerabilidade e Fusão ELECTRE Tri-B"),
+        ("src.processamento.08_fogo_floresta", "Processamento 08 — Fogo em Floresta e Avaliação pelo Dano Ecológico")
     ]
     
     for mod, desc in scripts:
@@ -46,6 +47,7 @@ def main():
     print(" RESULTADOS MODELOS PERIGO: data/processed/resultados/perigo_resumo.csv")
     print(" RESULTADOS ANÁLISE EXCESSO: data/processed/resultados/excesso_resumo.csv")
     print(" RESULTADOS HÍBRIDO B ELECTRE: data/processed/resultados/hibrido_resumo.csv")
+    print(" RESULTADOS DANO ECOLÓGICO: data/processed/resultados/dano_resumo.csv")
     print("=" * 70)
 
 if __name__ == "__main__":
