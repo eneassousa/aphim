@@ -2,28 +2,32 @@
 Módulo 05 — Módulo de Vulnerabilidade (AHP) e Fusão Multicritério ELECTRE Tri-B (Projeto APHIM)
 Dissertação de Mestrado: Predição e Priorização Mensal de Municípios do Pará para Ação contra Queimadas.
 
-Objetivos:
+Objetivos e Ajustes Metodológicos:
 1. Módulo de Vulnerabilidade (AHP):
    - Pesos calculados pelo método do autovetor principal de Saaty a partir de config.yaml.
    - Cálculo da Razão de Consistência (CR < 0,10).
    - Normalização [0, 1] dos critérios de vulnerabilidade com min/max calculados ESTRITAMENTE no treino.
    - Geração do índice de vulnerabilidade V = soma(peso_nivel2 * criterio_normalizado).
-2. Fusão Perigo + Vulnerabilidade via ELECTRE Tri-B (Híbrido B):
+2. Fusão Perigo + Vulnerabilidade via ELECTRE Tri-B no Espaço de Percentis (ECDF do Treino):
    - Alternativas: 3.456 observações do teste (144 municípios x 24 meses).
-   - Critérios: Perigo (previsão do vencedor da rodada 2 / rf_A), Desmatamento (t-1), Floresta (t-1), Renda (-renda_pc).
-   - Perfis de fronteira nos quantis 0,50, 0,75 e 0,90 calculados estritamente no treino (y observado para perigo).
-   - Limiares de indiferença (q = 5%) e preferência (p = 15%) da amplitude do treino. Sem veto.
+   - Transformação empírica ECDF estritamente calibrada no treino para cada critério:
+     * perigo: ECDF do y observado no treino, aplicada às previsões de teste.
+     * desmatamento e floresta: ECDF dos valores do treino.
+     * renda: ECDF de -renda do treino (-renda_pc, critério de custo).
+   - Perfis de fronteira fixados nos percentis b1 = 0,50, b2 = 0,75 e b3 = 0,90.
+   - Limiares em unidades de percentil a partir de config.yaml: q = 0,02 e p = 0,05. Sem veto.
    - Procedimento de atribuição pessimista com corte lambda = 0,75.
-   - Teste unitário automatizado de fronteiras extremas.
+   - Bateria de 5 testes unitários automatizados (incluindo dominância de perigo e perfis intermediários).
 3. Avaliação de Rankings Comparados no Teste:
-   - hibrido_B (ordena por classe ELECTRE e desempata por perigo).
+   - hibrido_B (ordena por classe ELECTRE decrescente e desempata por perigo).
    - vulnerabilidade_isolada (ordena só por V).
    - perigo_isolado (modelo preditivo vencedor).
-   - Baselines de referência (climatologia_focos, persistencia, oraculo).
+   - Baselines de referência (climatologia_focos, persistencia, historico_fixo, rf_inpe, oraculo).
 4. Métricas e Estatística:
    - Captura@k, Captura*@15, Captura ponderada@15, CapturaExcesso@15, Spearman e Rotatividade.
    - Versão agregada de todas as capturas (focos totais capturados / focos totais no período).
    - Distribuição de classes comparada com a referência do WCAMA.
+   - Teste de sanidade em setembro de 2024 (Top 15 com classe, perigo e V).
    - Testes de Wilcoxon pareado (24 meses) + Bootstrap 95% + Correção de Holm para Captura@15 e Captura ponderada@15.
    - Análise de sensibilidade dos pesos (+-20%, 8 cenários).
 
@@ -110,7 +114,6 @@ def calcular_ahp(config_mc: Dict[str, Any]) -> Tuple[Dict[str, float], float, Di
     w_n2 = {crit: float(w_n2_arr[i]) for i, crit in enumerate(criterios_vuln)}
 
     # Razão de consistência (Saaty)
-    # Tabela de RI para n=1..10
     ri_table = {1: 0.0, 2: 0.0, 3: 0.58, 4: 0.90, 5: 1.12, 6: 1.24, 7: 1.32, 8: 1.41, 9: 1.45, 10: 1.49}
     ci = (lambda_max - n) / (n - 1) if n > 1 else 0.0
     ri = ri_table.get(n, 1.49)
@@ -157,7 +160,6 @@ def calcular_indice_vulnerabilidade(
     for col, (vmin, vmax) in escalas_vuln.items():
         norm_col = np.clip((df_out[col] - vmin) / (vmax - vmin), 0.0, 1.0)
         if col == "renda_pc":
-            # Inversão da renda: quanto menor a renda, maior a vulnerabilidade
             df_out["renda_norm_inv"] = 1.0 - norm_col
         else:
             df_out[f"{col}_norm"] = norm_col
@@ -168,7 +170,6 @@ def calcular_indice_vulnerabilidade(
         w_n2["renda_pc"] * df_out["renda_norm_inv"]
     )
 
-    # Exportar vulnerabilidade_municipio_ano.csv
     df_out["ano"] = df_out["mes_emissao"].str[:4].astype(int)
     cols_vuln_ano = [
         "cd_mun", "ano",
@@ -182,7 +183,7 @@ def calcular_indice_vulnerabilidade(
     return df_out, escalas_vuln
 
 # ==============================================================================
-# 3. MOTOR ELECTRE TRI-B
+# 3. MOTOR ELECTRE TRI-B NO ESPAÇO DE PERCENTIS (ECDF)
 # ==============================================================================
 
 def concordancia_parcial(ga: float, gb: float, q: float, p: float) -> float:
@@ -202,23 +203,22 @@ def classificar_alternativa_electre_tri_b(
     crit_vals: Dict[str, float],
     weights: Dict[str, float],
     perfis: Dict[str, Tuple[float, float, float]],
-    limiares: Dict[str, Tuple[float, float]],
+    q: float,
+    p: float,
     classes_info: List[Tuple[int, str, int]],
     lambda_cut: float = 0.75
 ) -> Tuple[str, int]:
     """
-    Atribuição pessimista do ELECTRE Tri-B:
+    Atribuição pessimista do ELECTRE Tri-B no espaço de percentis:
     Compara a alternativa sucessivamente de cima para baixo com os perfis b_3, b_2, b_1.
     A alternativa é atribuída à classe correspondente ao primeiro perfil b_h que ela sobreclassifica (sigma >= lambda).
     Caso não sobreclassifique nenhum perfil, vai para a classe mais baixa (Baixo).
     """
-    # classes_info: [(2, 'Critico', 4), (1, 'Alto', 3), (0, 'Moderado', 2)]
     for h_idx, cl_nome, cl_ord in classes_info:
         sigma = 0.0
         for c_nome, w in weights.items():
             ga = crit_vals[c_nome]
             gb = perfis[c_nome][h_idx]
-            q, p = limiares[c_nome]
             c_val = concordancia_parcial(ga, gb, q, p)
             sigma += w * c_val
         if sigma >= lambda_cut:
@@ -228,31 +228,51 @@ def classificar_alternativa_electre_tri_b(
 def executar_testes_unitarios_electre(
     weights: Dict[str, float],
     perfis: Dict[str, Tuple[float, float, float]],
-    limiares: Dict[str, Tuple[float, float]],
+    q: float,
+    p: float,
     classes_info: List[Tuple[int, str, int]],
     lambda_cut: float = 0.75
 ):
-    logger.info("Executando teste unitário das propriedades do ELECTRE Tri-B...")
-    # Teste A: alternativa estritamente acima de b3 em todos os critérios deve ir para Crítico
-    alt_max = {c: perfis[c][2] + 2.0 * limiares[c][1] for c in weights}
-    cl_max, ord_max = classificar_alternativa_electre_tri_b(alt_max, weights, perfis, limiares, classes_info, lambda_cut)
+    logger.info("Executando bateria de testes unitários do ELECTRE Tri-B no espaço de percentis...")
+    
+    # Teste 1: alternativa estritamente acima de b3 em todos os critérios deve ir para Crítico
+    alt_max = {c: 0.99 for c in weights}
+    cl_max, ord_max = classificar_alternativa_electre_tri_b(alt_max, weights, perfis, q, p, classes_info, lambda_cut)
     if cl_max != "Critico" or ord_max != 4:
-        raise AssertionError(f"FALHA NO TESTE UNITÁRIO A: Esperado 'Critico', obtido '{cl_max}'.")
+        raise AssertionError(f"FALHA NO TESTE UNITÁRIO 1: Esperado 'Critico', obtido '{cl_max}'.")
 
-    # Teste B: alternativa estritamente abaixo de b1 em todos os critérios deve ir para Baixo
-    alt_min = {c: perfis[c][0] - 2.0 * limiares[c][1] for c in weights}
-    cl_min, ord_min = classificar_alternativa_electre_tri_b(alt_min, weights, perfis, limiares, classes_info, lambda_cut)
+    # Teste 2: alternativa estritamente abaixo de b1 - p em todos os critérios deve ir para Baixo
+    alt_min = {c: 0.10 for c in weights}
+    cl_min, ord_min = classificar_alternativa_electre_tri_b(alt_min, weights, perfis, q, p, classes_info, lambda_cut)
     if cl_min != "Baixo" or ord_min != 1:
-        raise AssertionError(f"FALHA NO TESTE UNITÁRIO B: Esperado 'Baixo', obtido '{cl_min}'.")
+        raise AssertionError(f"FALHA NO TESTE UNITÁRIO 2: Esperado 'Baixo', obtido '{cl_min}'.")
 
-    logger.info("Testes unitários do ELECTRE Tri-B aprovados com 100% de sucesso!")
+    # Teste 3: perigo no percentil 0.99 e demais critérios em 0.95 -> Crítico
+    alt_3 = {"perigo": 0.99, "desmat_pct_area_prodes": 0.95, "pct_floresta": 0.95, "renda_pc": 0.95}
+    cl_3, ord_3 = classificar_alternativa_electre_tri_b(alt_3, weights, perfis, q, p, classes_info, lambda_cut)
+    if cl_3 != "Critico" or ord_3 != 4:
+        raise AssertionError(f"FALHA NO TESTE UNITÁRIO 3: Esperado 'Critico', obtido '{cl_3}'.")
+
+    # Teste 4: perigo em 0.10 e demais em 0.95 -> NÃO pode ser Crítico (pois perigo pesa 0.5 e corte é 0.75)
+    alt_4 = {"perigo": 0.10, "desmat_pct_area_prodes": 0.95, "pct_floresta": 0.95, "renda_pc": 0.95}
+    cl_4, ord_4 = classificar_alternativa_electre_tri_b(alt_4, weights, perfis, q, p, classes_info, lambda_cut)
+    if cl_4 == "Critico":
+        raise AssertionError(f"FALHA NO TESTE UNITÁRIO 4: Alternativa com perigo baixo foi indevidamente classificada como 'Critico'.")
+
+    # Teste 5: todos os critérios em 0.60 -> Moderado (acima de b1=0.50 e abaixo de b2=0.75)
+    alt_5 = {c: 0.60 for c in weights}
+    cl_5, ord_5 = classificar_alternativa_electre_tri_b(alt_5, weights, perfis, q, p, classes_info, lambda_cut)
+    if cl_5 != "Moderado" or ord_5 != 2:
+        raise AssertionError(f"FALHA NO TESTE UNITÁRIO 5: Esperado 'Moderado', obtido '{cl_5}'.")
+
+    logger.info("Bateria de 5 testes unitários do ELECTRE Tri-B aprovada com 100% de sucesso!")
 
 # ==============================================================================
 # 4. AVALIAÇÃO DE RANKINGS E MÉTRICAS COMPARADAS
 # ==============================================================================
 
 def executar_etapa_6():
-    logger.info("=== INICIANDO ETAPA 6: MÓDULO DE VULNERABILIDADE E FUSÃO ELECTRE TRI-B ===")
+    logger.info("=== INICIANDO ETAPA 6: MÓDULO DE VULNERABILIDADE E FUSÃO ELECTRE TRI-B (VERSÃO ECDF) ===")
     config = carregar_config()
     processed_dir = Path(config["caminhos"]["processed"])
     resultados_dir = processed_dir / "resultados"
@@ -266,16 +286,16 @@ def executar_etapa_6():
     # 2. Carregar dados de modelagem e predições de teste
     mod_v2_path = processed_dir / "aphim_modelagem_v2.parquet"
     mod_path = mod_v2_path if mod_v2_path.exists() else processed_dir / "aphim_modelagem.parquet"
+    base_raw_path = processed_dir / "aphim_base_municipio_mes.parquet"
     df_mod = pd.read_parquet(mod_path)
+    df_base_raw = pd.read_parquet(base_raw_path)
+
     df_mod["cd_mun"] = df_mod["cd_mun"].astype(str).str.zfill(7)
+    df_base_raw["cd_mun"] = df_base_raw["cd_mun"].astype(str).str.zfill(7)
 
     # Predições de perigo: prioriza vencedor de 03b se existir, senão rf_A
     preds_v2_path = resultados_dir / "features_v2_predicoes_teste.parquet"
     preds_e5_path = resultados_dir / "perigo_predicoes_teste.parquet"
-
-    df_preds_teste = None
-    col_perigo = ""
-    nome_modelo_perigo = ""
 
     if preds_v2_path.exists():
         logger.info(f"Carregando predições do vencedor da Rodada 2 de atributos de '{preds_v2_path}'...")
@@ -297,8 +317,8 @@ def executar_etapa_6():
     # 3. Índice de Vulnerabilidade V
     df_mod, _ = calcular_indice_vulnerabilidade(df_mod, w_n2, resultados_dir)
 
-    # 4. Parâmetros de treino para ELECTRE Tri-B
-    logger.info("Calculando quantis e limiares do ELECTRE Tri-B estritamente nas linhas de treino...")
+    # 4. Construção das ECDFs Estritamente no Treino
+    logger.info("Construindo ECDFs empíricas no treino para todos os critérios...")
     df_treino = df_mod[df_mod["conjunto"] == "treino"].copy()
     df_teste = df_mod[df_mod["conjunto"] == "teste"].copy()
     df_ancora = df_mod[df_mod["mes_emissao"] == "2023-11"].copy() # mes_alvo = 2023-12
@@ -306,55 +326,65 @@ def executar_etapa_6():
     # Incorporar perigo previsto
     df_teste = df_teste.merge(df_preds_teste, on=["cd_mun", "mes_alvo"], how="left")
     df_ancora = df_ancora.merge(df_preds_teste, on=["cd_mun", "mes_alvo"], how="left")
-    # Caso âncora 2023-12 não esteja no teste, preenche com focos_media_hist_mes para perigo de desempate
     if df_ancora[col_perigo].isnull().any():
         df_ancora[col_perigo] = df_ancora[col_perigo].fillna(df_ancora["focos_media_hist_mes"])
 
-    # Escala dos 4 critérios no treino:
-    # Perigo no treino usa o y observado conforme metodologia
-    criterios_tr = {
-        "perigo": df_treino["y"].values.astype(float),
-        "desmat_pct_area_prodes": df_treino["desmat_pct_area_prodes"].values.astype(float),
-        "pct_floresta": df_treino["pct_floresta"].values.astype(float),
-        "renda_pc": -df_treino["renda_pc"].values.astype(float) # critério de custo: -renda
+    # Score correto do histórico fixo (2019-2023)
+    logger.info("Calculando score exato do histórico fixo (2019-2023 por município)...")
+    df_hist_fixo_treino = df_base_raw[df_base_raw["ano"].between(2019, 2023)]
+    focos_hist_fixo_dict = df_hist_fixo_treino.groupby("cd_mun")["focos_count"].sum().to_dict()
+    df_teste["score_hist_fixo"] = df_teste["cd_mun"].map(focos_hist_fixo_dict)
+    df_ancora["score_hist_fixo"] = df_ancora["cd_mun"].map(focos_hist_fixo_dict)
+
+    # ECDFs do treino
+    train_arrays = {
+        "perigo": np.sort(df_treino["y"].values.astype(float)),
+        "desmat_pct_area_prodes": np.sort(df_treino["desmat_pct_area_prodes"].values.astype(float)),
+        "pct_floresta": np.sort(df_treino["pct_floresta"].values.astype(float)),
+        "renda_pc": np.sort(-df_treino["renda_pc"].values.astype(float)) # -renda
     }
 
+    def criar_ecdf(sorted_arr: np.ndarray):
+        n = len(sorted_arr)
+        return lambda v: np.searchsorted(sorted_arr, v, side="right") / float(n)
+
+    ecdfs = {k: criar_ecdf(arr) for k, arr in train_arrays.items()}
+
+    # Parâmetros ELECTRE no espaço de percentis
     quantis_cfg = config_mc["electre"]["quantis_perfis"]
-    indif_pct = float(config_mc["electre"]["indiferenca_pct_amplitude"])
-    pref_pct = float(config_mc["electre"]["preferencia_pct_amplitude"])
+    limiar_q = float(config_mc["electre"]["limiar_q_percentil"])
+    limiar_p = float(config_mc["electre"]["limiar_p_percentil"])
     lambda_cut = float(config_mc["electre"]["corte_lambda"])
 
-    perfis = {}
-    limiares = {}
-    for c_nome, vals in criterios_tr.items():
-        amp = float(vals.max() - vals.min())
-        q = indif_pct * amp
-        p = pref_pct * amp
-        b1 = float(np.quantile(vals, quantis_cfg[0]))
-        b2 = float(np.quantile(vals, quantis_cfg[1]))
-        b3 = float(np.quantile(vals, quantis_cfg[2]))
-        perfis[c_nome] = (b1, b2, b3)
-        limiares[c_nome] = (q, p)
-        logger.info(f"Critério '{c_nome}': amplitude={amp:.2f}, q={q:.2f}, p={p:.2f} | b1={b1:.2f}, b2={b2:.2f}, b3={b3:.2f}")
+    # Perfis de fronteira fixados no espaço de percentil
+    perfis = {
+        k: (float(quantis_cfg[0]), float(quantis_cfg[1]), float(quantis_cfg[2]))
+        for k in train_arrays
+    }
 
     classes_info = [(2, "Critico", 4), (1, "Alto", 3), (0, "Moderado", 2)]
 
-    # Executar teste unitário
-    executar_testes_unitarios_electre(w_finais, perfis, limiares, classes_info, lambda_cut)
+    logger.info(f"Limiares de percentil carregados: q = {limiar_q:.4f}, p = {limiar_p:.4f}, lambda = {lambda_cut:.2f}")
+    logger.info(f"Perfis de fronteira em percentil: b1 = {quantis_cfg[0]}, b2 = {quantis_cfg[1]}, b3 = {quantis_cfg[2]}")
+
+    # Executar bateria de testes unitários
+    executar_testes_unitarios_electre(w_finais, perfis, limiar_q, limiar_p, classes_info, lambda_cut)
 
     # 5. Classificação do Teste via ELECTRE Tri-B
-    logger.info("Classificando as 3.456 alternativas de teste pelo ELECTRE Tri-B (atribuição pessimista)...")
+    logger.info("Classificando as 3.456 alternativas de teste pelo ELECTRE Tri-B (espaço de percentis)...")
     
     def classificar_df(df_target):
         res = []
         for _, r in df_target.iterrows():
             c_vals = {
-                "perigo": float(r[col_perigo]),
-                "desmat_pct_area_prodes": float(r["desmat_pct_area_prodes"]),
-                "pct_floresta": float(r["pct_floresta"]),
-                "renda_pc": -float(r["renda_pc"])
+                "perigo": float(ecdfs["perigo"](r[col_perigo])),
+                "desmat_pct_area_prodes": float(ecdfs["desmat_pct_area_prodes"](r["desmat_pct_area_prodes"])),
+                "pct_floresta": float(ecdfs["pct_floresta"](r["pct_floresta"])),
+                "renda_pc": float(ecdfs["renda_pc"](-r["renda_pc"]))
             }
-            cl_nome, cl_ord = classificar_alternativa_electre_tri_b(c_vals, w_finais, perfis, limiares, classes_info, lambda_cut)
+            cl_nome, cl_ord = classificar_alternativa_electre_tri_b(
+                c_vals, w_finais, perfis, limiar_q, limiar_p, classes_info, lambda_cut
+            )
             res.append((cl_nome, cl_ord))
         return [x[0] for x in res], [x[1] for x in res]
 
@@ -373,7 +403,6 @@ def executar_etapa_6():
 
     # 6. Avaliação dos Rankings Comparados
     logger.info("Avaliando métricas dos rankings comparados mês a mês...")
-    # Score combinado para hibrido_B: classe_ordem * 1e9 + perigo (desempata por perigo dentro da mesma classe)
     df_teste["score_hibrido_B"] = df_teste["classe_ordem"] * 1e9 + df_teste[col_perigo]
     df_ancora["score_hibrido_B"] = df_ancora["classe_ordem"] * 1e9 + df_ancora[col_perigo]
 
@@ -418,24 +447,21 @@ def executar_etapa_6():
     ]
 
     dfs_mensais = []
-    resumos_lista = []
-
     for nome_m, col_s in metodos_avaliar:
-        df_m, agr_15 = avaliar_metodo(df_teste, col_s, nome_m, df_ancora)
+        df_m, _ = avaliar_metodo(df_teste, col_s, nome_m, df_ancora)
         dfs_mensais.append(df_m)
 
     df_hibrido_mensal = pd.concat(dfs_mensais, ignore_index=True)
     df_hibrido_mensal = adicionar_captura_star_15(df_hibrido_mensal, col_metodo="metodo", nome_oraculo="oraculo")
 
     # Montagem da tabela resumo
-    for nome_m, _ in metodos_avaliar:
+    resumos_lista = []
+    for nome_m, col_s in metodos_avaliar:
         sub_m = df_hibrido_mensal[df_hibrido_mensal["metodo"] == nome_m]
         sub_sec = sub_m[sub_m["mes_alvo"].isin(meses_seca)]
         
-        # Recalcular captura agregada precisa
         sub_agr = 0.0
         for mes in meses_alvo:
-            col_s = [c for n, c in metodos_avaliar if n == nome_m][0]
             sub = df_teste[df_teste["mes_alvo"] == mes].sort_values(by=[col_s, "cd_mun"], ascending=[False, True])
             sub_agr += float(sub.iloc[:15]["y"].sum())
         agr_val = float(sub_agr / focos_totais_periodo)
@@ -490,7 +516,6 @@ def executar_etapa_6():
         diffs = s_hib - s_comp
         dif_media = float(np.mean(diffs))
 
-        # Bootstrap
         indices = rng_boot.randint(0, len(diffs), size=(10000, len(diffs)))
         boot_means = np.mean(diffs[indices], axis=1)
         ic_inf = float(np.percentile(boot_means, 2.5))
@@ -519,9 +544,8 @@ def executar_etapa_6():
     df_testes_stat.to_csv(out_testes, index=False, encoding="utf-8")
     logger.info(f"Testes estatísticos salvos em '{out_testes}'.")
 
-    # 8. Análise de Sensibilidade dos Pesos (+-20%, 8 cenários)
-    logger.info("Executando análise de sensibilidade dos pesos (+-20%, 8 cenários)...")
-    # Top-15 base mensal
+    # 8. Análise de Sensibilidade dos Pesos (+-20%, 8 cenários) no Espaço de Percentis
+    logger.info("Executando análise de sensibilidade dos pesos (+-20%, 8 cenários) no espaço de percentis...")
     top15_base_mensal = {}
     for mes in meses_alvo:
         sub = df_teste[df_teste["mes_alvo"] == mes].sort_values(by=["score_hibrido_B", "cd_mun"], ascending=[False, True])
@@ -537,22 +561,22 @@ def executar_etapa_6():
             soma_pert = sum(w_pert.values())
             w_pert_norm = {k: v / soma_pert for k, v in w_pert.items()}
 
-            # Reclassificar teste
             def classificar_pert(row):
                 c_vals = {
-                    "perigo": float(row[col_perigo]),
-                    "desmat_pct_area_prodes": float(row["desmat_pct_area_prodes"]),
-                    "pct_floresta": float(row["pct_floresta"]),
-                    "renda_pc": -float(row["renda_pc"])
+                    "perigo": float(ecdfs["perigo"](row[col_perigo])),
+                    "desmat_pct_area_prodes": float(ecdfs["desmat_pct_area_prodes"](row["desmat_pct_area_prodes"])),
+                    "pct_floresta": float(ecdfs["pct_floresta"](row["pct_floresta"])),
+                    "renda_pc": float(ecdfs["renda_pc"](-row["renda_pc"]))
                 }
-                _, cl_ord = classificar_alternativa_electre_tri_b(c_vals, w_pert_norm, perfis, limiares, classes_info, lambda_cut)
+                _, cl_ord = classificar_alternativa_electre_tri_b(
+                    c_vals, w_pert_norm, perfis, limiar_q, limiar_p, classes_info, lambda_cut
+                )
                 return cl_ord
 
             ords_pert = [classificar_pert(r) for _, r in df_teste.iterrows()]
             df_teste_pert = df_teste.copy()
             df_teste_pert["score_pert"] = np.array(ords_pert) * 1e9 + df_teste_pert[col_perigo]
 
-            # Avaliar Captura@15 e coincidência com o base
             caps15_pert = []
             cpond15_pert = []
             coincidencias = []
@@ -586,13 +610,11 @@ def executar_etapa_6():
     df_sensibilidade.to_csv(out_sens, index=False, encoding="utf-8")
     logger.info(f"Análise de sensibilidade salva em '{out_sens}'.")
 
-    # 9. Tabela Consolidada de Capturas Agregadas (Todos os Métodos)
-    logger.info("Gerando tabela unificada de capturas agregadas para todos os métodos avaliados...")
-    
-    # Lista completa de métodos a compilar
+    # 9. Tabela Consolidada de Capturas Agregadas (Todos os Métodos Corrigida)
+    logger.info("Gerando tabela unificada de capturas agregadas corrigida para todos os métodos...")
     metodos_todos = []
     
-    # a) Baselines e modelos já avaliados na Etapa 5
+    # Modelos da Etapa 5
     if preds_e5_path.exists():
         df_pe5 = pd.read_parquet(preds_e5_path)
         colunas_preds_e5 = [c for c in df_pe5.columns if c.startswith("pred_")]
@@ -602,18 +624,19 @@ def executar_etapa_6():
             df_t_temp[c] = df_pe5[c].values
             metodos_todos.append((nome_m, "modelo_etapa5", c, df_t_temp))
 
-    # b) Vencedor de 03b se disponível
+    # Vencedor da Etapa 03b
     if preds_v2_path.exists():
         metodos_todos.append(("xgb_A_v2_sel", "modelo_vencedor_v2", "pred_vencedor", df_teste))
 
-    # c) Baselines
+    # Baselines
     metodos_todos.append(("oraculo", "baseline", "y", df_teste))
     metodos_todos.append(("climatologia_focos", "baseline", "focos_media_hist_mes", df_teste))
     metodos_todos.append(("persistencia", "baseline", "focos_t", df_teste))
-    metodos_todos.append(("historico_fixo", "baseline", "focos_media_hist_mes", df_teste)) # proxy
+    # Correção do historico_fixo: utiliza a contagem total de focos em 2019-2023
+    metodos_todos.append(("historico_fixo", "baseline", "score_hist_fixo", df_teste))
     metodos_todos.append(("rf_inpe", "baseline", "base_rf_inpe_media_t", df_teste))
 
-    # d) Métodos da Etapa 6
+    # Métodos da Etapa 6
     metodos_todos.append(("hibrido_B", "fusao_multicriterio", "score_hibrido_B", df_teste))
     metodos_todos.append(("vulnerabilidade_isolada", "vulnerabilidade_isolada", "V", df_teste))
 
@@ -647,29 +670,37 @@ def executar_etapa_6():
     df_agregadas.to_csv(out_agregadas, index=False, encoding="utf-8")
     logger.info(f"Tabela capturas_agregadas.csv salva com sucesso em '{out_agregadas}'.")
 
+    # 10. Teste de Sanidade em Setembro de 2024
+    sub_set24 = df_teste[df_teste["mes_alvo"] == "2024-09"].sort_values(
+        by=["score_hibrido_B", "cd_mun"], ascending=[False, True]
+    ).reset_index(drop=True)
+    cols_sanidade = ["cd_mun", "nm_mun", "classe", col_perigo, "y", "V"]
+    df_sanidade_set24 = sub_set24.iloc[:15][cols_sanidade].rename(columns={col_perigo: "perigo_previsto", "y": "focos_reais"})
+
     # Exibição final dos resultados solicitados
     print("\n" + "=" * 90)
     print("        ETAPA 6 — MÓDULO DE VULNERABILIDADE E FUSÃO ELECTRE TRI-B CONCLUÍDOS")
     print("=" * 90)
-    print("\n1. PESOS DO AHP E RAZÃO DE CONSISTÊNCIA (CR):")
-    print(f"CR: {cr_ahp:.4f} (Aprovado < 0,10)")
-    print(f"Pesos Finais: {w_finais}")
-    print("\n2. PERFIS DE FRONTEIRA E LIMIARES (TREINO):")
-    for c_nome in criterios_tr:
-        b1, b2, b3 = perfis[c_nome]
-        q, p = limiares[c_nome]
-        print(f"{c_nome:<25}: b1(0.50)={b1:>10.2f} | b2(0.75)={b2:>10.2f} | b3(0.90)={b3:>10.2f} | q={q:>8.2f} | p={p:>8.2f}")
-    print("\n3. TABELA-RESUMO: HÍBRIDO B, VULNERABILIDADE E REFERÊNCIAS:")
-    print(df_hibrido_resumo.to_string(index=False))
-    print("\n4. DISTRIBUIÇÃO POR CLASSE DO HÍBRIDO B vs WCAMA:")
+    print("\n1. DISTRIBUIÇÃO POR CLASSE DO HÍBRIDO B vs WCAMA:")
     for cl in ["Baixo", "Moderado", "Alto", "Critico"]:
         pct_teste = dist_classes.get(cl, 0.0)
         pct_wcama = ref_wcama.get(cl, 0.0)
         print(f"{cl:<10}: Teste APHIM = {pct_teste:>6.2f}% | WCAMA Publicado = {pct_wcama:>6.2f}%")
-    print("\n5. TESTES ESTATÍSTICOS PAREADOS (WILCOXON + BOOTSTRAP + HOLM):")
+
+    print("\n2. TESTE DE SANIDADE EM SETEMBRO DE 2024 (TOP 15 DO HÍBRIDO B):")
+    print(df_sanidade_set24.to_string(index=False))
+
+    print("\n3. TABELA-RESUMO: HÍBRIDO B, VULNERABILIDADE E REFERÊNCIAS:")
+    print(df_hibrido_resumo.to_string(index=False))
+
+    print("\n4. TESTES ESTATÍSTICOS PAREADOS (WILCOXON + BOOTSTRAP + HOLM):")
     print(df_testes_stat.to_string(index=False))
-    print("\n6. ANÁLISE DE SENSIBILIDADE DOS PESOS (+-20%):")
+
+    print("\n5. ANÁLISE DE SENSIBILIDADE DOS PESOS (+-20%):")
     print(df_sensibilidade.to_string(index=False))
+
+    print("\n6. TABELA CONSOLIDADA DE CAPTURAS AGREGADAS CORRIGIDA:")
+    print(df_agregadas.to_string(index=False))
     print("=" * 90 + "\n")
 
 if __name__ == "__main__":

@@ -79,8 +79,9 @@ multicriterio:
   electre:
     quantis_perfis: [0.50, 0.75, 0.90]
     classes: ["Baixo", "Moderado", "Alto", "Critico"]
-    indiferenca_pct_amplitude: 0.05
-    preferencia_pct_amplitude: 0.15
+    limiar_q_percentil: 0.02
+    limiar_p_percentil: 0.05
     corte_lambda: 0.75
     atribuicao: "pessimista"
+
 
