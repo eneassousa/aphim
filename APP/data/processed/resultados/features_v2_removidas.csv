@@ -1,0 +1,10 @@
+etapa,atributo_ou_grupo,motivo_remocao
+limpeza_multicolinearidade,"dens_t, dens_t1, dens_t2, dens_mm3, dens_mesmo_mes_ano_ant, dens_media_hist_mes","Colinear com contagens de focos (|ρ| > 0,90); priorização metodológica de contagens absolutas sobre densidades."
+limpeza_multicolinearidade,dpv_kpa,"Perfeitamente colinear com umidade relativa (|ρ| = 1,00); ur_pct é métrica direta, padronizada e mais interpretável."
+limpeza_multicolinearidade,anom_lst_c,"Quase perfeitamente colinear com anomalia de temperatura a 2m (|ρ| = 0,98); anom_t2m_media_c é livre de artefatos de nuvens do sensor LST."
+limpeza_multicolinearidade,focos_mesmo_mes_ano_ant,"Colinear com média histórica (|ρ| = 0,96); focos_media_hist_mes possui menor variância temporal por agregar múltiplos anos anteriores."
+limpeza_multicolinearidade,focos_mm3,"Colinear com lag t-1 (|ρ| = 0,93); os lags diretos mensais (t, t-1, t-2) capturam a inércia temporal de forma mais limpa e parcimoniosa."
+limpeza_multicolinearidade,anom_ur_pct,"Colinear com anomalia de umidade do solo (|ρ| = 0,91); anom_umid_solo reflete diretamente a dessecação do combustível florestal."
+limpeza_multicolinearidade,prec_mm,"Colinear com ur_pct (|ρ| = 0,94) e prec_3m (|ρ| = 0,91); umidade relativa do ar e acumulados de precipitação capturam o sinal hidrometeorológico sem redundância."
+selecao_para_tras_grupo,estado,Remoção pelo critério de backward elimination na validação elevou/manteve a Captura@15 (diff: +0.28 p.p.).
+selecao_para_tras_grupo,clima_mes,Remoção pelo critério de backward elimination na validação elevou/manteve a Captura@15 (diff: +0.43 p.p.).

@@ -28,6 +28,7 @@ def main():
         ("src.processamento.01_atributos_alvo", "Processamento 01 — Engenharia de Atributos, Alvo e Divisão Temporal"),
         ("src.processamento.02_baselines", "Processamento 02 — Baselines de Priorização e Avaliação Comparativa"),
         ("src.processamento.03_modelo_perigo", "Processamento 03 — Módulo de Perigo e Modelagem Preditiva"),
+        ("src.processamento.03b_atributos_v2", "Processamento 03b — Rodada 2 de Atributos, Limpeza e Seleção"),
         ("src.processamento.04_excesso", "Processamento 04 — Análise de Excesso e Rankings de Anomalia")
     ]
     
