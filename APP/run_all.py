@@ -27,7 +27,8 @@ def main():
         ("src.coleta.09_tabela_final", "09 — Montagem da Tabela Final Integrada APHIM"),
         ("src.processamento.01_atributos_alvo", "Processamento 01 — Engenharia de Atributos, Alvo e Divisão Temporal"),
         ("src.processamento.02_baselines", "Processamento 02 — Baselines de Priorização e Avaliação Comparativa"),
-        ("src.processamento.03_modelo_perigo", "Processamento 03 — Módulo de Perigo e Modelagem Preditiva")
+        ("src.processamento.03_modelo_perigo", "Processamento 03 — Módulo de Perigo e Modelagem Preditiva"),
+        ("src.processamento.04_excesso", "Processamento 04 — Análise de Excesso e Rankings de Anomalia")
     ]
     
     for mod, desc in scripts:
@@ -41,6 +42,7 @@ def main():
     print(" BASE DE MODELAGEM: data/processed/aphim_modelagem.parquet")
     print(" RESULTADOS BASELINES: data/processed/resultados/baselines_resumo.csv")
     print(" RESULTADOS MODELOS PERIGO: data/processed/resultados/perigo_resumo.csv")
+    print(" RESULTADOS ANÁLISE EXCESSO: data/processed/resultados/excesso_resumo.csv")
     print("=" * 70)
 
 if __name__ == "__main__":
