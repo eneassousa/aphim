@@ -216,12 +216,17 @@ def montar_base_modelagem(
     cell_focos_mat: np.ndarray,
     meses_todos: list,
     W_neigh: sp.csr_matrix,
-    processed_dir: Path
-) -> pd.DataFrame:
+    processed_dir: Path,
+    out_parquet_path: Path
+) -> int:
     """
     Calcula os atributos temporais, de vizinhança e contextuais municipais
-    para os 83 meses de emissão (2019-01 a 2025-11).
+    para os 83 meses de emissão (2019-01 a 2025-11), gravando via streaming
+    diretamente no arquivo Parquet para manter uso de memória sob controle.
     """
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
     logger.info("Iniciando engenharia de atributos temporais e espaciais da grade...")
     n_cells = len(gdf_cells)
     mes_to_idx = {m: i for i, m in enumerate(meses_todos)}
@@ -247,9 +252,7 @@ def montar_base_modelagem(
     vizinhos_focos_mat = W_neigh.dot(cell_focos_mat)  # shape (n_cells, 84)
 
     # Pré-computar climatologia histórica por célula e mês de calendário
-    # para alvo em target_year (somente anos < target_year)
     logger.info("Pré-computando média histórica de focos da célula por mês de calendário...")
-    # hist_fire_dict[(m_num, target_year)] = matriz (n_cells,)
     hist_cell_dict = {}
     hist_neigh_dict = {}
 
@@ -266,9 +269,9 @@ def montar_base_modelagem(
                 hist_cell_dict[(m_num, target_year)] = mean_cell
                 hist_neigh_dict[(m_num, target_year)] = mean_neigh
 
-    # Montagem dos blocos mês a mês
-    logger.info("Montando blocos tabulares de modelagem (83 meses)...")
-    blocos = []
+    logger.info(f"Gravando base de modelagem via streaming em '{out_parquet_path}'...")
+    writer = None
+    total_linhas = 0
 
     for t_str in meses_emissao:
         t_idx = mes_to_idx[t_str]
@@ -323,18 +326,24 @@ def montar_base_modelagem(
 
         # 5. Contexto municipal em t
         clima_tuples = [mun_clima_lookup.get((c, t_str), {}) for c in gdf_cells["cd_mun"].values]
-        df_t["focos_mun_t"] = [c.get("focos_t", 0.0) for c in clima_tuples]
-        df_t["prec_mm"] = [c.get("prec_mm", 0.0) for c in clima_tuples]
-        df_t["ur_pct"] = [c.get("ur_pct", 0.0) for c in clima_tuples]
-        df_t["dpv_kpa"] = [c.get("dpv_kpa", 0.0) for c in clima_tuples]
-        df_t["umid_solo"] = [c.get("umid_solo", 0.0) for c in clima_tuples]
-        df_t["anom_prec_mm"] = [c.get("anom_prec_mm", 0.0) for c in clima_tuples]
+        df_t["focos_mun_t"] = np.array([c.get("focos_t", 0.0) for c in clima_tuples], dtype=np.float32)
+        df_t["prec_mm"] = np.array([c.get("prec_mm", 0.0) for c in clima_tuples], dtype=np.float32)
+        df_t["ur_pct"] = np.array([c.get("ur_pct", 0.0) for c in clima_tuples], dtype=np.float32)
+        df_t["dpv_kpa"] = np.array([c.get("dpv_kpa", 0.0) for c in clima_tuples], dtype=np.float32)
+        df_t["umid_solo"] = np.array([c.get("umid_solo", 0.0) for c in clima_tuples], dtype=np.float32)
+        df_t["anom_prec_mm"] = np.array([c.get("anom_prec_mm", 0.0) for c in clima_tuples], dtype=np.float32)
 
-        blocos.append(df_t)
+        table = pa.Table.from_pandas(df_t, preserve_index=False)
+        if writer is None:
+            writer = pq.ParquetWriter(out_parquet_path, table.schema, compression="snappy")
+        writer.write_table(table)
+        total_linhas += len(df_t)
 
-    df_modelagem = pd.concat(blocos, ignore_index=True)
-    logger.info(f"Base de modelagem concluída com {len(df_modelagem):,} registros.")
-    return df_modelagem
+    if writer is not None:
+        writer.close()
+
+    logger.info(f"Base de modelagem concluída com {total_linhas:,} registros.")
+    return total_linhas
 
 def main():
     t_start = time.time()
@@ -385,18 +394,16 @@ def main():
     gpkg_size_mb = out_gpkg.stat().st_size / (1024 * 1024)
     logger.info(f"GeoPackage salvo com sucesso! Tamanho: {gpkg_size_mb:.2f} MB.")
 
-    # 5. Montar e salvar tabela de modelagem
-    df_modelagem = montar_base_modelagem(
+    # 5. Montar e salvar tabela de modelagem via streaming
+    out_parquet = processed_dir / f"grade_{tamanho_str}m_modelagem.parquet"
+    total_registros = montar_base_modelagem(
         gdf_cells=gdf_cells,
         cell_focos_mat=cell_focos_mat,
         meses_todos=meses_todos,
         W_neigh=W_neigh,
-        processed_dir=processed_dir
+        processed_dir=processed_dir,
+        out_parquet_path=out_parquet
     )
-
-    out_parquet = processed_dir / f"grade_{tamanho_str}m_modelagem.parquet"
-    logger.info(f"Salvando base de modelagem em '{out_parquet}'...")
-    df_modelagem.to_parquet(out_parquet, index=False)
     parquet_size_mb = out_parquet.stat().st_size / (1024 * 1024)
     logger.info(f"Parquet salvo com sucesso! Tamanho: {parquet_size_mb:.2f} MB.")
 
@@ -417,20 +424,21 @@ def main():
     df_base_mun["mes"] = df_base_mun["mes"].astype(str)
     mun_focos_dict = df_base_mun.set_index(["cd_mun", "mes"])["focos_count"].to_dict()
 
-    # Soma das células por cd_mun x mes
-    gdf_cells_cd = gdf_cells[["cell_id", "cd_mun"]].copy()
+    # Mapeamento rápido de índices de células por município
+    cd_mun_arr = gdf_cells["cd_mun"].values
+    unique_muns = np.unique(cd_mun_arr)
+    mun_cell_indices = {m: np.where(cd_mun_arr == m)[0] for m in unique_muns}
     diffs_pct = []
-    
+
     for m_idx, m_str in enumerate(meses_todos):
-        df_mes_f = pd.DataFrame({"cell_id": gdf_cells["cell_id"], "focos": cell_focos_mat[:, m_idx]})
-        df_mes_f["cd_mun"] = gdf_cells["cd_mun"].values
-        soma_mun_cel = df_mes_f.groupby("cd_mun")["focos"].sum()
-        
-        for cd, f_cel in soma_mun_cel.items():
+        col_f = cell_focos_mat[:, m_idx]
+        for cd, indices in mun_cell_indices.items():
+            f_cel = col_f[indices].sum()
             f_mun = mun_focos_dict.get((cd, m_str), 0)
             if f_mun > 0:
                 diff_pct = abs(f_cel - f_mun) / f_mun * 100.0
                 diffs_pct.append(diff_pct)
+
 
     dif_media_pct = float(np.mean(diffs_pct)) if len(diffs_pct) > 0 else 0.0
     dif_max_pct = float(np.max(diffs_pct)) if len(diffs_pct) > 0 else 0.0

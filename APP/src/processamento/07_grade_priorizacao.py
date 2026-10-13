@@ -167,6 +167,7 @@ def validar_hiperparametros(
         # 1. Dobra 2022
         m22 = xgb.XGBRegressor(
             objective="count:poisson",
+            tree_method="hist",
             max_depth=p["max_depth"],
             learning_rate=p["learning_rate"],
             n_estimators=p["n_estimators"],
@@ -186,6 +187,7 @@ def validar_hiperparametros(
         # 2. Dobra 2023
         m23 = xgb.XGBRegressor(
             objective="count:poisson",
+            tree_method="hist",
             max_depth=p["max_depth"],
             learning_rate=p["learning_rate"],
             n_estimators=p["n_estimators"],
@@ -604,6 +606,9 @@ def main():
     # 4. Partição Treino e Validação de Hiperparâmetros
     df_treino = df_mod[df_mod["conjunto"] == "treino"].copy()
     df_teste = df_mod[df_mod["conjunto"] == "teste"].copy()
+    del df_mod
+    import gc
+    gc.collect()
 
     melhores_params = validar_hiperparametros(df_treino, cell_area_map)
 
@@ -612,6 +617,7 @@ def main():
     t_train_start = time.time()
     modelo_final = xgb.XGBRegressor(
         objective="count:poisson",
+        tree_method="hist",
         max_depth=melhores_params["max_depth"],
         learning_rate=melhores_params["learning_rate"],
         n_estimators=melhores_params["n_estimators"],

@@ -26,7 +26,7 @@ firms:
 projecao_area: 5880 # EPSG:5880 (SIRGAS 2000 / Brazil Polyconic)
 
 grade:
-  tamanho_m: 5000
+  tamanho_m: 2500
 
 era5:
   asset: "ECMWF/ERA5_LAND/MONTHLY_AGGR"
