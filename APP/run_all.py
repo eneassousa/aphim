@@ -31,6 +31,8 @@ def main():
         ("src.processamento.03b_atributos_v2", "Processamento 03b — Rodada 2 de Atributos, Limpeza e Seleção"),
         ("src.processamento.04_excesso", "Processamento 04 — Análise de Excesso e Rankings de Anomalia"),
         ("src.processamento.05_vulnerabilidade_electre", "Processamento 05 — Módulo de Vulnerabilidade e Fusão ELECTRE Tri-B"),
+        ("src.processamento.06_grade_base", "Processamento 06 — Grade Espacial Base e Atributos de Célula"),
+        ("src.processamento.07_grade_priorizacao", "Processamento 07 — Priorização Espacial em Nível 2 (Grade)"),
         ("src.processamento.08_fogo_floresta", "Processamento 08 — Fogo em Floresta e Avaliação pelo Dano Ecológico")
     ]
     
@@ -47,6 +49,7 @@ def main():
     print(" RESULTADOS MODELOS PERIGO: data/processed/resultados/perigo_resumo.csv")
     print(" RESULTADOS ANÁLISE EXCESSO: data/processed/resultados/excesso_resumo.csv")
     print(" RESULTADOS HÍBRIDO B ELECTRE: data/processed/resultados/hibrido_resumo.csv")
+    print(" RESULTADOS GRADE ESPACIAL: data/processed/resultados/grade_10000m_resumo.csv")
     print(" RESULTADOS DANO ECOLÓGICO: data/processed/resultados/dano_resumo.csv")
     print("=" * 70)
 

@@ -65,3 +65,7 @@ gemini-code-*
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Bases volumosas de grade espacial
+APP/data/processed/grade_*_modelagem.parquet
+**/data/processed/grade_*_modelagem.parquet
