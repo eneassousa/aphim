@@ -167,3 +167,10 @@ Ano    | Chuva Média Anual (mm)   | Temp. Média (°C)   | UR Média (%)
 2023   |                  1837.0 |              27.0 |          76.3%
 2024   |                  1934.7 |              27.4 |          74.7%
 2025   |                  2226.1 |              26.6 |          78.6%
+
+--- 8. AUDITORIA FIRMS: FALLBACK NRT (2014–2018) ---
+Total de janelas processadas: 805 janelas de 5 dias (2015–2025)
+Janelas que caíram no fallback NRT: 0
+Janelas vazias/sem focos: 2
+Origem dos dados brutos: 100% obtidos da fonte científica padrão SP (Standard Processing - VIIRS_SNPP_SP)
+STATUS: APROVADO [x] (Exatamente 0 janelas em NRT, conforme esperado)
