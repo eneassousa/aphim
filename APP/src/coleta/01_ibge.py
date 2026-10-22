@@ -13,7 +13,8 @@ from src.utils.logger import setup_logger
 logger = setup_logger("coleta_01_ibge")
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def validar_municipios(gdf: gpd.GeoDataFrame) -> bool:

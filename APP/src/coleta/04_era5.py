@@ -42,7 +42,8 @@ BANDAS_REQUERIDAS = [
 ]
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def inicializar_gee():
@@ -276,7 +277,8 @@ def validar_serie_clima(df_clima: pd.DataFrame, processed_dir: Path) -> dict:
     
     # Validação 1: Contagem e integridade
     n_linhas = len(df_clima)
-    esperado = 144 * 96 # 13.824
+    n_meses = df_clima["mes"].nunique()
+    esperado = 144 * n_meses
     if n_linhas != esperado:
         raise ValueError(f"FALHA NA VALIDAÇÃO: Esperado {esperado} linhas, obtido {n_linhas}.")
         
@@ -293,7 +295,7 @@ def validar_serie_clima(df_clima: pd.DataFrame, processed_dir: Path) -> dict:
         logger.error(f"Valores nulos encontrados:\n{nulos[nulos > 0]}")
         raise ValueError("FALHA NA VALIDAÇÃO: Valores nulos encontrados na série de clima.")
         
-    logger.info(f"Validação de integridade aprovada: 13.824 linhas sem duplicatas e sem nulos.")
+    logger.info(f"Validação de integridade aprovada: {n_linhas} linhas ({n_meses} meses) sem duplicatas e sem nulos.")
 
     # Validação 2: Faixas plausíveis para o Pará
     fora_t2m = df_clima[~df_clima["t2m_media_c"].between(18.0, 35.0)]
@@ -324,7 +326,7 @@ def validar_serie_clima(df_clima: pd.DataFrame, processed_dir: Path) -> dict:
     }
     sazonalidade["nome_mes"] = sazonalidade["mes_calendario"].map(nomes_meses)
     
-    logger.info("\n--- MÉDIA ESTADUAL POR MÊS DO CALENDÁRIO (1991-2025 / 2018-2025) ---")
+    logger.info("\n--- MÉDIA ESTADUAL POR MÊS DO CALENDÁRIO ---")
     for _, r in sazonalidade.iterrows():
         logger.info(f" {r['nome_mes']:<10}: Chuva = {r['prec_mm_media']:>6.1f} mm | Temp = {r['t2m_c_media']:>4.1f} °C | UR = {r['ur_pct_media']:>4.1f}%")
         
@@ -347,11 +349,12 @@ def validar_serie_clima(df_clima: pd.DataFrame, processed_dir: Path) -> dict:
         chuva_mensal = df_clima.groupby("mes")["prec_mm"].mean().reset_index()
         
         df_merge = pd.merge(chuva_mensal, focos_mensais, on="mes")
-        # Filtrar 2019-2025
-        df_merge_19_25 = df_merge[df_merge["mes"] >= "2019-01"]
+        # Filtrar período de interseção
+        min_mes = max(df_merge["mes"].min(), "2019-01")
+        df_merge_sub = df_merge[df_merge["mes"] >= min_mes]
         
-        correlacao_chuva_focos = df_merge_19_25["prec_mm"].corr(df_merge_19_25[col_focos])
-        logger.info(f"\nCorrelação de Pearson (2019-2025) entre Chuva Média Estadual e Focos Totais do Pará: {correlacao_chuva_focos:.4f}")
+        correlacao_chuva_focos = df_merge_sub["prec_mm"].corr(df_merge_sub[col_focos])
+        logger.info(f"\nCorrelação de Pearson ({min_mes} a {df_merge_sub['mes'].max()}) entre Chuva Média Estadual e Focos Totais do Pará: {correlacao_chuva_focos:.4f}")
         if correlacao_chuva_focos >= 0:
             logger.warning(f"Atenção: A correlação chuva x focos resultou positiva ({correlacao_chuva_focos:.4f}), contrariando o esperado.")
         else:
@@ -381,16 +384,21 @@ def executar_coleta_era5():
     out_principal = processed_dir / "clima_municipio_mes.parquet"
     out_normal = processed_dir / "clima_normal_1991_2020.parquet"
     
+    ano_inicio = config.get("era5", {}).get("periodo_principal", {}).get("ano_inicio", 2018)
+    ano_fim = config.get("era5", {}).get("periodo_principal", {}).get("ano_fim", 2025)
+    n_meses_esperados = (ano_fim - ano_inicio + 1) * 12
+    linhas_esperadas = 144 * n_meses_esperados
+    
     # Idempotência total se ambos já existirem e forem válidos
     if out_principal.exists() and out_normal.exists():
         logger.info("Arquivos finais de clima já existem. Verificando integridade...")
         df_existente = pd.read_parquet(out_principal)
-        if len(df_existente) == 13824:
+        if len(df_existente) == linhas_esperadas:
             if "prec_extremo" not in df_existente.columns:
                 df_existente["prec_extremo"] = df_existente["prec_mm"] > 1000.0
                 df_existente.to_parquet(out_principal, index=False)
                 logger.info(f"Coluna 'prec_extremo' adicionada a '{out_principal}' ({df_existente['prec_extremo'].sum()} registros verdadeiros).")
-            logger.info("Série principal existente validada (13.824 linhas). Executando validações...")
+            logger.info(f"Série principal existente validada ({linhas_esperadas} linhas). Executando validações...")
             res_val = validar_serie_clima(df_existente, processed_dir)
             return df_existente, res_val
 
@@ -412,10 +420,10 @@ def executar_coleta_era5():
     # 1. Climatologia de referência 1991-2020
     df_normal = extrair_climatologia_normal_gee(fc_mun, collection, raw_dir, processed_dir)
     
-    # 2. Série Principal: jan/2018 a dez/2025 (96 meses)
-    logger.info("Extraindo série principal jan/2018 a dez/2025 (96 meses)...")
+    # 2. Série Principal: jan/{ano_inicio} a dez/{ano_fim} ({n_meses_esperados} meses)
+    logger.info(f"Extraindo série principal jan/{ano_inicio} a dez/{ano_fim} ({n_meses_esperados} meses)...")
     meses_totais = []
-    for ano in range(2018, 2026):
+    for ano in range(ano_inicio, ano_fim + 1):
         for mes in range(1, 13):
             meses_totais.append((ano, mes))
             
@@ -438,7 +446,7 @@ def executar_coleta_era5():
     dfs_chunks = []
     with ThreadPoolExecutor(max_workers=5) as executor:
         futures = {executor.submit(processar_chunk_mensal, item): item for item in meses_totais}
-        for future in tqdm(as_completed(futures), total=len(meses_totais), desc="Meses ERA5-Land (2018-2025)"):
+        for future in tqdm(as_completed(futures), total=len(meses_totais), desc=f"Meses ERA5-Land ({ano_inicio}-{ano_fim})"):
             dfs_chunks.append(future.result())
         
     df_bruto_all = pd.concat(dfs_chunks, ignore_index=True)

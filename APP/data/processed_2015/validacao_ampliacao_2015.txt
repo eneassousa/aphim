@@ -1,0 +1,169 @@
+================================================================================
+RELATÓRIO DE VALIDAÇÃO DA AMPLIAÇÃO DO PERÍODO (2015–2025)
+PROJETO APHIM — ETAPA 1: COLETA E BASE CONSOLIDADA
+================================================================================
+
+--- 1. TAMANHO DA BASE E UNICIDADE ---
+Linhas obtidas: 19,008 | Esperado: 19,008 (144 municípios x 132 meses)
+Municípios únicos: 144 | Meses únicos: 132 (de 2015-01 a 2025-12)
+Duplicatas de (cd_mun, mes): 0
+STATUS: APROVADO [x]
+
+--- 2. IGUALDADE NO PERÍODO ANTIGO (jan/2019 a dez/2025) ---
+Linhas comparadas: 12,096 (Base Nova) vs 12,096 (Base Antiga)
+Total de colunas em comum: 44
+Coluna                       | Tipo       | Linhas Dif.  | Maior Dif. Absoluta 
+------------------------------------------------------------------------------
+cd_mun                       | object     | 0            | N/A (texto)         
+nm_mun                       | object     | 0            | N/A (texto)         
+mes                          | object     | 0            | N/A (texto)         
+ano                          | int64      | 0            | 0.00e+00            
+mes_num                      | int64      | 0            | 0.00e+00            
+area_km2                     | float64    | 0            | 0.00e+00            
+focos_count                  | int64      | 0            | 0.00e+00            
+focos_por_km2                | float64    | 0            | 0.00e+00            
+t2m_media_c                  | float64    | 0            | 0.00e+00            
+t2m_max_c                    | float64    | 0            | 0.00e+00            
+t2m_min_c                    | float64    | 0            | 0.00e+00            
+td2m_c                       | float64    | 0            | 0.00e+00            
+prec_mm                      | float64    | 0            | 0.00e+00            
+prec_extremo                 | bool       | 0            | 0                   
+lst_c                        | float64    | 0            | 0.00e+00            
+umid_solo                    | float64    | 0            | 0.00e+00            
+vento_ms                     | float64    | 0            | 0.00e+00            
+ur_pct                       | float64    | 0            | 0.00e+00            
+dpv_kpa                      | float64    | 0            | 0.00e+00            
+rf_inpe_media                | float64    | 0            | 0.00e+00            
+rf_inpe_max                  | float64    | 0            | 0.00e+00            
+ano_mapbiomas                | int64      | 0            | 0.00e+00            
+area_km2_mapbiomas           | float64    | 0            | 0.00e+00            
+pct_floresta                 | float64    | 0            | 0.00e+00            
+pct_savana                   | float64    | 0            | 0.00e+00            
+pct_campo_natural            | float64    | 0            | 0.00e+00            
+pct_pastagem                 | float64    | 0            | 0.00e+00            
+pct_agricultura              | float64    | 0            | 0.00e+00            
+pct_mosaico                  | float64    | 0            | 0.00e+00            
+pct_silvicultura             | float64    | 0            | 0.00e+00            
+pct_urbano                   | float64    | 0            | 0.00e+00            
+pct_mineracao                | float64    | 0            | 0.00e+00            
+pct_nao_vegetado_outros      | float64    | 0            | 0.00e+00            
+pct_agua                     | float64    | 0            | 0.00e+00            
+pct_outros                   | float64    | 0            | 0.00e+00            
+pct_veg_nativa               | float64    | 0            | 0.00e+00            
+pct_antropico                | float64    | 0            | 0.00e+00            
+pct_solo_exposto             | float64    | 0            | 0.00e+00            
+ano_prodes                   | int64      | 0            | 0.00e+00            
+desmat_km2_prodes            | float64    | 0            | 0.00e+00            
+desmat_pct_area_prodes       | float64    | 0            | 0.00e+00            
+renda_pc                     | float64    | 0            | 0.00e+00            
+fonte_renda                  | object     | 0            | N/A (texto)         
+ano_ref_renda                | int64      | 0            | 0.00e+00            
+STATUS: APROVADO [x] (100% das colunas rigorosamente idênticas)
+
+--- 3. TOTAIS ANUAIS DE FOCOS FIRMS (VIIRS S-NPP) DO PARÁ ---
+Ano    | Focos Base Nova  | Focos Base Antiga  | Status         
+------------------------------------------------------------
+2015   |          340,802 |                  - | NOVO PERÍODO   
+2016   |          175,095 |                  - | NOVO PERÍODO   
+2017   |          364,167 |                  - | NOVO PERÍODO   
+2018   |          139,989 |                  - | NOVO PERÍODO   
+2019   |          203,654 |            203,654 | IDÊNTICO       
+2020   |          281,008 |            281,008 | IDÊNTICO       
+2021   |          149,051 |            149,051 | IDÊNTICO       
+2022   |          280,260 |            280,260 | IDÊNTICO       
+2023   |          289,462 |            289,462 | IDÊNTICO       
+2024   |          414,486 |            414,486 | IDÊNTICO       
+2025   |           77,781 |             77,781 | IDÊNTICO       
+
+--- 4. RELATÓRIO DE NULOS POR COLUNA E POR ANO ---
+Colunas que apresentam algum valor nulo na base: ['rf_inpe_media', 'rf_inpe_max']
+
+Detalhamento da coluna: rf_inpe_media
+  Ano 2015: 1728 nulos / 1728 (100.0%)
+  Ano 2016: 1728 nulos / 1728 (100.0%)
+  Ano 2017: 1728 nulos / 1728 (100.0%)
+  Ano 2018: 1728 nulos / 1728 (100.0%)
+  Ano 2019:    0 nulos / 1728 (  0.0%)
+  Ano 2020:    0 nulos / 1728 (  0.0%)
+  Ano 2021:    0 nulos / 1728 (  0.0%)
+  Ano 2022:    0 nulos / 1728 (  0.0%)
+  Ano 2023:    0 nulos / 1728 (  0.0%)
+  Ano 2024:    0 nulos / 1728 (  0.0%)
+  Ano 2025:    0 nulos / 1728 (  0.0%)
+
+Detalhamento da coluna: rf_inpe_max
+  Ano 2015: 1728 nulos / 1728 (100.0%)
+  Ano 2016: 1728 nulos / 1728 (100.0%)
+  Ano 2017: 1728 nulos / 1728 (100.0%)
+  Ano 2018: 1728 nulos / 1728 (100.0%)
+  Ano 2019:    0 nulos / 1728 (  0.0%)
+  Ano 2020:    0 nulos / 1728 (  0.0%)
+  Ano 2021:    0 nulos / 1728 (  0.0%)
+  Ano 2022:    0 nulos / 1728 (  0.0%)
+  Ano 2023:    0 nulos / 1728 (  0.0%)
+  Ano 2024:    0 nulos / 1728 (  0.0%)
+  Ano 2025:    0 nulos / 1728 (  0.0%)
+Colunas inesperadas com nulos: []
+STATUS: APROVADO [x] (Apenas Risco de Fogo INPE possui nulos antes de 2019, como esperado)
+
+--- 5. PRODES: COMPARATIVO ANUAL COM DADOS OFICIAIS INPE/TERRABRASILIS ---
+Ano    | Mapeado (km²)  | Oficial (km²)  | Variação (%)  
+------------------------------------------------------
+2014   |         1797.9 |         1887.0 |         -4.72%
+2015   |         2304.5 |         2153.0 |         +7.04%
+2016   |         2762.9 |         2992.0 |         -7.66%
+2017   |         2574.6 |         2433.0 |         +5.82%
+2018   |         2610.7 |         2744.0 |         -4.86%
+2019   |         4465.4 |         4172.0 |         +7.03%
+2020   |         4618.8 |         4899.0 |         -5.72%
+2021   |         5084.1 |         5238.0 |         -2.94%
+2022   |         4532.4 |         4141.0 |         +9.45%
+2023   |         2885.0 |         3272.0 |        -11.83%
+2024   |         2266.1 |         2736.0 |        -17.18%
+2025   |         1955.2 |         2450.0 |        -20.20%
+
+--- 6. MAPBIOMAS: EVOLUÇÃO ESTADUAL DO USO DO SOLO (% FLORESTA 2014–2024) ---
+Ano    | % Floresta   | % Veg. Nativa   | % Pastagem   | % Agricultura 
+------------------------------------------------------------------
+2014   |       78.03% |          81.63% |       14.09% |          0.46%
+2015   |       77.77% |          81.37% |       14.25% |          0.56%
+2016   |       77.45% |          81.12% |       14.47% |          0.65%
+2017   |       77.23% |          80.88% |       14.58% |          0.75%
+2018   |       77.01% |          80.65% |       14.75% |          0.81%
+2019   |       76.58% |          80.22% |       15.12% |          0.84%
+2020   |       76.14% |          79.79% |       15.50% |          0.87%
+2021   |       75.59% |          79.21% |       16.01% |          0.88%
+2022   |       75.08% |          78.52% |       16.53% |          0.88%
+2023   |       74.51% |          78.02% |       17.10% |          0.89%
+2024   |       74.28% |          77.74% |       17.39% |          0.89%
+
+--- 7. ERA5-LAND: CHUVA MÉDIA ANUAL ESTADUAL (2014–2025) ---
+Ranking dos anos mais secos do Pará (menor precipitação média anual acumulada):
+   1º lugar: Ano 2015 | Chuva =  1723.4 mm/ano | Temp = 26.7 °C | UR = 76.5% <-- El Niño forte
+   2º lugar: Ano 2023 | Chuva =  1837.0 mm/ano | Temp = 27.0 °C | UR = 76.3% <-- Ano mais seco recente
+   3º lugar: Ano 2016 | Chuva =  1909.6 mm/ano | Temp = 26.8 °C | UR = 78.3% <-- El Niño forte
+   4º lugar: Ano 2024 | Chuva =  1934.7 mm/ano | Temp = 27.4 °C | UR = 74.7%
+   5º lugar: Ano 2014 | Chuva =  2123.5 mm/ano | Temp = 26.2 °C | UR = 79.2%
+   6º lugar: Ano 2025 | Chuva =  2226.1 mm/ano | Temp = 26.6 °C | UR = 78.6%
+   7º lugar: Ano 2019 | Chuva =  2289.4 mm/ano | Temp = 26.5 °C | UR = 79.4%
+   8º lugar: Ano 2020 | Chuva =  2290.1 mm/ano | Temp = 26.6 °C | UR = 78.0%
+   9º lugar: Ano 2017 | Chuva =  2290.2 mm/ano | Temp = 26.6 °C | UR = 77.6%
+  10º lugar: Ano 2021 | Chuva =  2329.4 mm/ano | Temp = 26.2 °C | UR = 80.5%
+  11º lugar: Ano 2022 | Chuva =  2388.3 mm/ano | Temp = 26.3 °C | UR = 78.9%
+  12º lugar: Ano 2018 | Chuva =  2400.2 mm/ano | Temp = 26.3 °C | UR = 79.7%
+
+Tabela cronológica completa:
+Ano    | Chuva Média Anual (mm)   | Temp. Média (°C)   | UR Média (%)  
+--------------------------------------------------------------------
+2014   |                  2123.5 |              26.2 |          79.2%
+2015   |                  1723.4 |              26.7 |          76.5%
+2016   |                  1909.6 |              26.8 |          78.3%
+2017   |                  2290.2 |              26.6 |          77.6%
+2018   |                  2400.2 |              26.3 |          79.7%
+2019   |                  2289.4 |              26.5 |          79.4%
+2020   |                  2290.1 |              26.6 |          78.0%
+2021   |                  2329.4 |              26.2 |          80.5%
+2022   |                  2388.3 |              26.3 |          78.9%
+2023   |                  1837.0 |              27.0 |          76.3%
+2024   |                  1934.7 |              27.4 |          74.7%
+2025   |                  2226.1 |              26.6 |          78.6%

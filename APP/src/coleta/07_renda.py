@@ -40,7 +40,8 @@ FONTE_RENDA = "IBGE_Censo_2022_SIDRA_10295_v13534"
 ANO_REF_RENDA = 2022
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def obter_renda_censo_2022(raw_dir: Path) -> pd.DataFrame:

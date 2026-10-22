@@ -15,8 +15,11 @@ APP/data/raw/*
 !APP/data/raw/.gitkeep
 APP/data/interim/*
 !APP/data/interim/.gitkeep
+APP/data/interim_2015/*
+!APP/data/interim_2015/.gitkeep
 **/data/raw/*
 **/data/interim/*
+**/data/interim_2015/*
 *.tif
 *.tiff
 *.zip

@@ -17,12 +17,23 @@ from src.utils.logger import setup_logger
 logger = setup_logger("coleta_02_firms")
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def gerar_janelas_datas(data_inicio_str, data_fim_str, step_days=5):
     inicio = datetime.strptime(data_inicio_str, "%Y-%m-%d")
     fim = datetime.strptime(data_fim_str, "%Y-%m-%d")
+    marco_2019 = datetime.strptime("2019-01-01", "%Y-%m-%d")
+    
+    # Se o período começar antes de 2019 e for até 2019 ou além,
+    # alinha as janelas em 2019-01-01 para garantir 100% de reaproveitamento do cache histórico!
+    if inicio < marco_2019 <= fim:
+        fim_anterior = marco_2019 - timedelta(days=1)
+        janelas_ant = gerar_janelas_datas(inicio.strftime("%Y-%m-%d"), fim_anterior.strftime("%Y-%m-%d"), step_days)
+        janelas_pos = gerar_janelas_datas("2019-01-01", data_fim_str, step_days)
+        return janelas_ant + janelas_pos
+
     janelas = []
     curr = inicio
     while curr <= fim:
@@ -35,11 +46,19 @@ def gerar_janelas_datas(data_inicio_str, data_fim_str, step_days=5):
 def baixar_janela_firms(map_key, source_main, source_nrt, bbox, day_range, start_date, raw_dir):
     bbox_str = f"{bbox[0]},{bbox[1]},{bbox[2]},{bbox[3]}"
     out_file = raw_dir / f"firms_{source_main}_{start_date}_{day_range}d.csv"
+    out_file_nrt = raw_dir / f"firms_{source_nrt}_{start_date}_{day_range}d.csv"
     
     if out_file.exists():
         try:
             df = pd.read_csv(out_file)
-            return df
+            return df, "SP", start_date
+        except Exception:
+            pass
+
+    if out_file_nrt.exists():
+        try:
+            df = pd.read_csv(out_file_nrt)
+            return df, "NRT", start_date
         except Exception:
             pass
             
@@ -55,7 +74,7 @@ def baixar_janela_firms(map_key, source_main, source_nrt, bbox, day_range, start
                     raise ValueError("FIRMS MAP_KEY inválida.")
                 with open(out_file, "w", encoding="utf-8") as f:
                     f.write(text)
-                return pd.read_csv(out_file)
+                return pd.read_csv(out_file), "SP", start_date
             elif r.status_code == 429:
                 time.sleep(5)
             else:
@@ -70,14 +89,13 @@ def baixar_janela_firms(map_key, source_main, source_nrt, bbox, day_range, start
     try:
         r = requests.get(url_nrt, timeout=30)
         if r.status_code == 200 and "Invalid MAP_KEY" not in r.text:
-            out_file_nrt = raw_dir / f"firms_{source_nrt}_{start_date}_{day_range}d.csv"
             with open(out_file_nrt, "w", encoding="utf-8") as f:
                 f.write(r.text)
-            return pd.read_csv(out_file_nrt)
+            return pd.read_csv(out_file_nrt), "NRT", start_date
     except Exception:
         pass
 
-    return pd.DataFrame()
+    return pd.DataFrame(), "NONE", start_date
 
 def processar_firms():
     load_dotenv()
@@ -110,10 +128,11 @@ def processar_firms():
     gdf_mun = gpd.read_file(gpkg_path)
 
     janelas = gerar_janelas_datas(data_inicio, data_fim, step_days=5)
-    logger.info(f"Iniciando download paralelo (10 workers) de {len(janelas)} janelas (2019-2025)...")
+    logger.info(f"Iniciando download paralelo (10 workers) de {len(janelas)} janelas ({data_inicio[:4]}-{data_fim[:4]})...")
     
     dfs = []
     janelas_faltantes = 0
+    janelas_nrt = []
     
     # Download paralelo usando ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=10) as executor:
@@ -123,7 +142,9 @@ def processar_firms():
         }
         for future in tqdm(as_completed(futures), total=len(futures), desc="Download FIRMS Multithreaded"):
             try:
-                df = future.result()
+                df, fonte, s_date = future.result()
+                if fonte == "NRT":
+                    janelas_nrt.append(s_date)
                 if not df.empty and len(df) > 0:
                     dfs.append(df)
                 else:
@@ -135,6 +156,11 @@ def processar_firms():
                 janelas_faltantes += 1
                 
     logger.info(f"Download concluído! Registros obtidos em {len(dfs)} janelas. Janelas vazias/sem focos: {janelas_faltantes}.")
+    logger.info(f"Auditoria NRT: {len(janelas_nrt)} janelas caíram no fallback NRT.")
+    if janelas_nrt:
+        logger.warning(f"Lista de janelas em fallback NRT: {sorted(janelas_nrt)}")
+    else:
+        logger.info("Confirmado: zero janelas caíram no fallback NRT. 100% dos dados vieram da fonte principal SP.")
 
     if not dfs:
         logger.error("Nenhum dado baixado.")

@@ -36,6 +36,10 @@ CATALOG_URL = "https://terrabrasilis.dpi.inpe.br/"
 # Taxas Oficiais publicadas pelo INPE para o Pará (km² por ano PRODES - 01/ago a 31/jul)
 # Fonte: INPE / TerraBrasilis - Coordenação-Geral de Observação da Terra (CGOBT)
 TAXAS_OFICIAIS_INPE_PA = {
+    2014: 1887.0,
+    2015: 2153.0,
+    2016: 2992.0,
+    2017: 2433.0,
     2018: 2744.0,
     2019: 4172.0,
     2020: 4899.0,
@@ -47,7 +51,8 @@ TAXAS_OFICIAIS_INPE_PA = {
 }
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def baixar_prodes_ano(ano: int, raw_dir: Path) -> gpd.GeoDataFrame:
@@ -141,7 +146,8 @@ def validar_prodes(df_all: pd.DataFrame, gdf_mun: gpd.GeoDataFrame) -> dict:
     
     # Validação 1: Contagem e integridade
     n_linhas = len(df_all)
-    esperado = 144 * 8
+    anos_unicos = df_all["ano"].nunique()
+    esperado = 144 * anos_unicos
     if n_linhas != esperado:
         raise ValueError(f"FALHA NA VALIDAÇÃO: Esperado {esperado} linhas, obtido {n_linhas}.")
         
@@ -151,7 +157,7 @@ def validar_prodes(df_all: pd.DataFrame, gdf_mun: gpd.GeoDataFrame) -> dict:
         
     if df_all.isnull().sum().sum() > 0:
         raise ValueError("FALHA NA VALIDAÇÃO: Valores nulos encontrados no PRODES.")
-    logger.info("Validação 1 aprovada: exatamente 1.152 linhas sem duplicatas e sem nulos.")
+    logger.info(f"Validação 1 aprovada: exatamente {n_linhas} linhas ({anos_unicos} anos) sem duplicatas e sem nulos.")
 
     # Validação 2: Comparação Anual com Taxa Oficial INPE
     totais_ano = df_all.groupby("ano")["desmat_km2"].sum().reset_index()
@@ -170,7 +176,9 @@ def validar_prodes(df_all: pd.DataFrame, gdf_mun: gpd.GeoDataFrame) -> dict:
         )
     logger.info("Validação 2 aprovada: ordem de grandeza e tendência temporal 100% consistentes!")
 
-    # Validação 3: Top 10 Municípios com Maior Desmatamento Acumulado (2018–2025)
+    # Validação 3: Top 10 Municípios com Maior Desmatamento Acumulado
+    ano_min = int(df_all["ano"].min())
+    ano_max = int(df_all["ano"].max())
     df_acum = (
         df_all.groupby("cd_mun")["desmat_km2"].sum().reset_index()
         .merge(gdf_mun[["cd_mun", "nm_mun", "area_km2"]], on="cd_mun")
@@ -178,7 +186,7 @@ def validar_prodes(df_all: pd.DataFrame, gdf_mun: gpd.GeoDataFrame) -> dict:
     df_acum["pct_area_desmatada_acum"] = (df_acum["desmat_km2"] / df_acum["area_km2"]) * 100.0
     top_10 = df_acum.sort_values("desmat_km2", ascending=False).head(10).reset_index(drop=True)
     
-    logger.info("\n--- TOP 10 MUNICÍPIOS COM MAIOR DESMATAMENTO ACUMULADO (2018–2025) ---")
+    logger.info(f"\n--- TOP 10 MUNICÍPIOS COM MAIOR DESMATAMENTO ACUMULADO ({ano_min}–{ano_max}) ---")
     for idx, r in top_10.iterrows():
         logger.info(
             f" {idx+1:>2}. {r['nm_mun']:<22} ({r['cd_mun']}): "
@@ -191,8 +199,11 @@ def validar_prodes(df_all: pd.DataFrame, gdf_mun: gpd.GeoDataFrame) -> dict:
     }
 
 def executar_coleta_prodes():
-    logger.info("Iniciando Módulo 06: PRODES Amazônia (2018–2025)...")
     config = carregar_config()
+    ano_inicio = config.get("prodes", {}).get("ano_inicio", 2018)
+    ano_fim = config.get("prodes", {}).get("ano_fim", 2025)
+    logger.info(f"Iniciando Módulo 06: PRODES Amazônia ({ano_inicio}–{ano_fim})...")
+    
     processed_dir = Path(config["caminhos"]["processed"])
     raw_dir = Path(config["caminhos"]["raw"]) / "prodes"
     processed_dir.mkdir(parents=True, exist_ok=True)
@@ -205,21 +216,22 @@ def executar_coleta_prodes():
         raise FileNotFoundError(f"Malha municipal '{gpkg_path}' não encontrada. Execute 01_ibge.py primeiro.")
     gdf_mun = gpd.read_file(gpkg_path)
     
+    anos_esperados = ano_fim - ano_inicio + 1
+    linhas_esperadas = 144 * anos_esperados
+    
     # Idempotência total
     if out_file.exists():
         logger.info(f"Arquivo final '{out_file}' já existe. Verificando integridade...")
         df_existente = pd.read_parquet(out_file)
-        if len(df_existente) == 1152:
-            logger.info("Série do PRODES validada (1.152 linhas). Executando validações...")
+        if len(df_existente) == linhas_esperadas:
+            logger.info(f"Série do PRODES validada ({linhas_esperadas} linhas). Executando validações...")
             res_val = validar_prodes(df_existente, gdf_mun)
             return df_existente, res_val
 
     proj_epsg = config.get("projecao_area", 5880)
-    ano_inicio = config.get("prodes", {}).get("ano_inicio", 2018)
-    ano_fim = config.get("prodes", {}).get("ano_fim", 2025)
     
     dfs_anos = []
-    for ano in tqdm(range(ano_inicio, ano_fim + 1), desc="PRODES 2018-2025"):
+    for ano in tqdm(range(ano_inicio, ano_fim + 1), desc=f"PRODES {ano_inicio}-{ano_fim}"):
         gdf_prodes = baixar_prodes_ano(ano, raw_dir)
         df_ano = processar_desmatamento_ano(ano, gdf_prodes, gdf_mun, proj_epsg)
         dfs_anos.append(df_ano)

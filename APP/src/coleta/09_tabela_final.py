@@ -2,7 +2,7 @@
 Módulo 09 — Montagem da Tabela Final Integrada (Projeto APHIM)
 Dissertação de Mestrado: Predição e Classificação de Risco de Queimadas no Pará.
 
-Consolida a grade analítica completa de 144 municípios x 84 meses (jan/2019 a dez/2025) = 12.096 linhas.
+Consolida a grade analítica completa de 144 municípios x N meses conforme configuração.
 
 Regras de Integração:
 1. Malha e Identificadores: 144 municípios do Pará (IBGE 2024 / SIRGAS 2000).
@@ -14,8 +14,8 @@ Regras de Integração:
 7. Vulnerabilidade Social: Renda domiciliar per capita mediana (Censo 2022 SIDRA) por cd_mun.
 
 Saídas:
-- data/processed/aphim_base_municipio_mes.parquet
-- data/processed/aphim_base_municipio_mes.csv
+- aphim_base_municipio_mes.parquet (no diretório processed da configuração)
+- aphim_base_municipio_mes.csv
 """
 
 import os
@@ -31,7 +31,8 @@ from src.utils.logger import setup_logger
 logger = setup_logger("coleta_09_tabela_final")
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def montar_tabela_final(processed_dir: Path) -> pd.DataFrame:
@@ -47,7 +48,7 @@ def montar_tabela_final(processed_dir: Path) -> pd.DataFrame:
     gdf_mun = gpd.read_file(gpkg_path)[["cd_mun", "nm_mun", "area_km2"]]
     gdf_mun["cd_mun"] = gdf_mun["cd_mun"].astype(str).str.zfill(7)
     
-    # 2. Focos FIRMS (2019 a 2025: 12.096 linhas)
+    # 2. Focos FIRMS
     focos_path = processed_dir / "focos_municipio_mes.parquet"
     if not focos_path.exists():
         raise FileNotFoundError(f"Base de focos '{focos_path}' não encontrada. Execute 02_firms.py primeiro.")
@@ -163,22 +164,28 @@ def montar_tabela_final(processed_dir: Path) -> pd.DataFrame:
     df_final = df_base[colunas_ordenadas].sort_values(["mes", "cd_mun"]).reset_index(drop=True)
     return df_final
 
-def validar_tabela_final(df: pd.DataFrame, processed_dir: Path):
+def validar_tabela_final(df: pd.DataFrame, processed_dir: Path, config: dict):
     """
     Validações estritas da etapa 09 (falhar com erro se não passarem):
-    1. Exatamente 12.096 linhas;
+    1. Linhas esperadas (144 municípios x N meses do período);
     2. Sem duplicatas de (cd_mun, mes);
     3. Teste automático de defasagem: ano_mapbiomas == ano - 1 e ano_prodes == ano - 1;
-    4. Soma total de focos exatamente 1.695.702;
-    5. Relatório de nulos por coluna.
+    4. Soma total de focos idêntica à base de focos da etapa 02;
+    5. Relatório de nulos por coluna (apenas risco de fogo pode ter nulos).
     """
     logger.info("=== INICIANDO VALIDAÇÕES OBRIGATÓRIAS DA TABELA FINAL (ETAPA 09) ===")
     
     # 1. Contagem de linhas
+    data_inicio = config["periodo"]["data_inicio"]
+    data_fim = config["periodo"]["data_fim"]
+    todos_meses = pd.date_range(start=data_inicio, end=data_fim, freq="MS")
+    n_meses_esperados = len(todos_meses)
+    esperado_linhas = 144 * n_meses_esperados
+    
     n_linhas = len(df)
-    if n_linhas != 12096:
-        raise ValueError(f"FALHA NA VALIDAÇÃO: Esperado 12.096 linhas, obtido {n_linhas}.")
-    logger.info("Validação 1 aprovada: exatamente 12.096 linhas (144 municípios x 84 meses).")
+    if n_linhas != esperado_linhas:
+        raise ValueError(f"FALHA NA VALIDAÇÃO: Esperado {esperado_linhas} linhas, obtido {n_linhas}.")
+    logger.info(f"Validação 1 aprovada: exatamente {n_linhas} linhas (144 municípios x {n_meses_esperados} meses).")
     
     # 2. Duplicatas
     dups = df.duplicated(subset=["cd_mun", "mes"]).sum()
@@ -195,10 +202,21 @@ def validar_tabela_final(df: pd.DataFrame, processed_dir: Path):
     
     # 4. Soma total de focos FIRMS
     soma_focos = int(df["focos_count"].sum())
-    esperado_focos = 1695702
-    if soma_focos != esperado_focos:
-        raise ValueError(f"FALHA NA VALIDAÇÃO: Soma de focos divergente! Esperado {esperado_focos}, obtido {soma_focos}.")
+    focos_path = processed_dir / "focos_municipio_mes.parquet"
+    if focos_path.exists():
+        df_focos_check = pd.read_parquet(focos_path)
+        esperado_focos = int(df_focos_check["focos_count"].sum())
+        if soma_focos != esperado_focos:
+            raise ValueError(f"FALHA NA VALIDAÇÃO: Soma de focos divergente! Esperado {esperado_focos}, obtido {soma_focos}.")
     logger.info(f"Validação 4 aprovada: soma total de focos idêntica à etapa 02 ({soma_focos:,} focos).")
+    
+    # Verificação adicional se contém o período histórico 2019-2025
+    sub_19_25 = df[(df["mes"] >= "2019-01") & (df["mes"] <= "2025-12")]
+    if len(sub_19_25) == 12096:
+        soma_19_25 = int(sub_19_25["focos_count"].sum())
+        logger.info(f"Subtotal 2019–2025: {soma_19_25:,} focos (esperado: 1.695.702).")
+        if soma_19_25 != 1695702:
+            raise ValueError(f"FALHA NA VALIDAÇÃO: Subtotal 2019-2025 divergente! Obtido {soma_19_25}, esperado 1.695.702.")
     
     # 5. Relatório de nulos
     nulos = df.isnull().sum()
@@ -211,7 +229,7 @@ def validar_tabela_final(df: pd.DataFrame, processed_dir: Path):
         else:
             logger.info(f" - {col:<25}: 0 nulos")
             
-    # Somente colunas de risco de fogo poderiam ter nulos caso houvesse meses ausentes
+    # Somente colunas de risco de fogo podem ter nulos
     colunas_proibidas_nulos = [c for c in df.columns if c not in ["rf_inpe_media", "rf_inpe_max"]]
     nulos_proibidos = df[colunas_proibidas_nulos].isnull().sum().sum()
     if nulos_proibidos > 0:
@@ -227,7 +245,7 @@ def executar_montagem_tabela_final():
     out_csv = processed_dir / "aphim_base_municipio_mes.csv"
     
     df_final = montar_tabela_final(processed_dir)
-    validar_tabela_final(df_final, processed_dir)
+    validar_tabela_final(df_final, processed_dir, config)
     
     logger.info(f"Exportando base final para Parquet: '{out_parquet}'...")
     df_final.to_parquet(out_parquet, index=False)

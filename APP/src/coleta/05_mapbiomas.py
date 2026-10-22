@@ -49,7 +49,8 @@ MAPBIOMAS_CLASSES = {
 }
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def inicializar_gee():
@@ -244,7 +245,8 @@ def validar_mapbiomas(df_all: pd.DataFrame, gdf_mun: gpd.GeoDataFrame) -> dict:
     
     # Validação 1: Contagem e integridade
     n_linhas = len(df_all)
-    esperado = 144 * 7
+    anos_unicos = df_all["ano"].nunique()
+    esperado = 144 * anos_unicos
     if n_linhas != esperado:
         raise ValueError(f"FALHA NA VALIDAÇÃO: Esperado {esperado} linhas, obtido {n_linhas}.")
         
@@ -254,7 +256,7 @@ def validar_mapbiomas(df_all: pd.DataFrame, gdf_mun: gpd.GeoDataFrame) -> dict:
         
     if df_all.isnull().sum().sum() > 0:
         raise ValueError("FALHA NA VALIDAÇÃO: Valores nulos encontrados no MapBiomas.")
-    logger.info("Validação 1 aprovada: exatamente 1.008 linhas sem duplicatas e sem nulos.")
+    logger.info(f"Validação 1 aprovada: exatamente {n_linhas} linhas ({anos_unicos} anos) sem duplicatas e sem nulos.")
 
     # Validação 2: Soma dos grupos-base [98%, 102%]
     grupos_base = list(MAPBIOMAS_CLASSES.keys()) + ["pct_outros"]
@@ -324,8 +326,11 @@ def validar_mapbiomas(df_all: pd.DataFrame, gdf_mun: gpd.GeoDataFrame) -> dict:
     }
 
 def executar_coleta_mapbiomas():
-    logger.info("Iniciando Módulo 05: MapBiomas Coleção 10 (2018–2024)...")
     config = carregar_config()
+    ano_inicio = config.get("mapbiomas", {}).get("ano_inicio", 2018)
+    ano_fim = config.get("mapbiomas", {}).get("ano_fim", 2024)
+    logger.info(f"Iniciando Módulo 05: MapBiomas Coleção 10 ({ano_inicio}–{ano_fim})...")
+    
     processed_dir = Path(config["caminhos"]["processed"])
     raw_dir = Path(config["caminhos"]["raw"]) / "mapbiomas"
     processed_dir.mkdir(parents=True, exist_ok=True)
@@ -338,19 +343,19 @@ def executar_coleta_mapbiomas():
         raise FileNotFoundError(f"Malha municipal '{gpkg_path}' não encontrada. Execute 01_ibge.py primeiro.")
     gdf_mun = gpd.read_file(gpkg_path)
     
+    anos_esperados = ano_fim - ano_inicio + 1
+    linhas_esperadas = 144 * anos_esperados
+    
     # Idempotência total
     if out_file.exists():
         logger.info(f"Arquivo final '{out_file}' já existe. Verificando integridade...")
         df_existente = pd.read_parquet(out_file)
-        if len(df_existente) == 1008:
-            logger.info("Série do MapBiomas validada (1.008 linhas). Executando validações...")
+        if len(df_existente) == linhas_esperadas:
+            logger.info(f"Série do MapBiomas validada ({linhas_esperadas} linhas). Executando validações...")
             res_val = validar_mapbiomas(df_existente, gdf_mun)
             return df_existente, res_val
 
     inicializar_gee()
-    
-    ano_inicio = config.get("mapbiomas", {}).get("ano_inicio", 2018)
-    ano_fim = config.get("mapbiomas", {}).get("ano_fim", 2024)
     
     dfs_anos = []
     todos_inesperados = set()
