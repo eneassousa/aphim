@@ -1,0 +1,4 @@
+configuracao,treino_inicio,n_atributos,hiperparametros,cap15_dobra_2022,cap15_dobra_2023,cap15_media
+R0,2020-02,20,"{""n_estimators"": 300, ""learning_rate"": 0.03, ""max_depth"": 3, ""subsample"": 0.8, ""colsample_bytree"": 0.8, ""min_child_weight"": 1}",0.5821624250123373,0.5282487364849479,0.5552055807486426
+R1,2016-02,20,"{""n_estimators"": 800, ""learning_rate"": 0.1, ""max_depth"": 3, ""subsample"": 0.8, ""colsample_bytree"": 0.8, ""min_child_weight"": 10}",0.5815452575989158,0.5349185522329344,0.5582319049159251
+R2,2016-02,24,"{""n_estimators"": 800, ""learning_rate"": 0.1, ""max_depth"": 3, ""subsample"": 0.8, ""colsample_bytree"": 0.8, ""min_child_weight"": 1}",0.5828241488080316,0.5338884229084991,0.5583562858582654

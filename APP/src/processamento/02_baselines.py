@@ -46,7 +46,8 @@ from src.utils.metricas_priorizacao import (
 logger = setup_logger("processamento_02_baselines")
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def executar_baselines():
@@ -70,10 +71,12 @@ def executar_baselines():
     df_mod["cd_mun"] = df_mod["cd_mun"].astype(str).str.zfill(7)
     df_base["cd_mun"] = df_base["cd_mun"].astype(str).str.zfill(7)
 
-    # 1. Pré-computar histórico fixo 2019-2023 (apenas período pré-teste, estritamente sem vazamento)
-    logger.info("Calculando total de focos históricos 2019-2023 por município para o baseline historico_fixo...")
-    df_treino_hist = df_base[df_base["ano"].between(2019, 2023)]
+    # 1. Pré-computar histórico fixo (início do treino até 2023, estritamente pré-teste)
+    ano_treino_inicio = int(config.get("particao", {}).get("treino", ["2019-01", "2023-11"])[0][:4])
+    logger.info(f"Calculando total de focos históricos {ano_treino_inicio}-2023 por município para o baseline historico_fixo...")
+    df_treino_hist = df_base[df_base["ano"].between(ano_treino_inicio, 2023)]
     focos_hist_fixo = df_treino_hist.groupby("cd_mun")["focos_count"].sum().to_dict()
+
 
     df_mod["score_hist_fixo"] = df_mod["cd_mun"].map(focos_hist_fixo)
 

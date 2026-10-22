@@ -7,6 +7,13 @@ periodo:
   ano_fim: 2025
   ano_inicio_historico: 2018
 
+particao:
+  aquecimento: ["2019-01", "2019-12"]
+  treino: ["2020-01", "2023-11"]
+  teste: ["2023-12", "2025-11"]
+  dobras_validacao: [2022, 2023]
+
+
 caminhos:
   raw: "data/raw"
   interim: "data/interim"

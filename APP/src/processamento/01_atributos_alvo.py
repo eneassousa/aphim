@@ -33,7 +33,8 @@ from src.utils.logger import setup_logger
 logger = setup_logger("processamento_01_atributos_alvo")
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 def get_next_month(mes_str: str) -> str:
@@ -54,17 +55,18 @@ def get_prev_month(mes_str: str, steps: int = 1) -> str:
             mes -= 1
     return f"{ano:04d}-{mes:02d}"
 
-def classificar_conjunto(mes_emissao: str) -> str:
+def classificar_conjunto(mes_emissao: str, particao: dict) -> str:
     """Define a partição temporal cronológica estrita da linha (município, t)."""
-    if "2019-01" <= mes_emissao <= "2019-12":
+    if particao["aquecimento"][0] <= mes_emissao <= particao["aquecimento"][1]:
         return "aquecimento"
-    elif "2020-01" <= mes_emissao <= "2023-11":
+    elif particao["treino"][0] <= mes_emissao <= particao["treino"][1]:
         return "treino"
-    elif "2023-12" <= mes_emissao <= "2025-11":
+    elif particao["teste"][0] <= mes_emissao <= particao["teste"][1]:
         return "teste"
     raise ValueError(f"Mês de emissão {mes_emissao} fora do escopo de modelagem.")
 
-def construir_tabela_modelagem(processed_dir: Path) -> pd.DataFrame:
+
+def construir_tabela_modelagem(processed_dir: Path, config: dict) -> pd.DataFrame:
     """
     Executa a montagem determinística de atributos, alvo e conjuntos cronológicos.
     """
@@ -113,22 +115,32 @@ def construir_tabela_modelagem(processed_dir: Path) -> pd.DataFrame:
     # 4. Lookup de Média Histórica de Focos no mesmo mês do calendário de mes_alvo (somente anos < ano_alvo)
     # Garante estritamente que nenhum ano >= ano(mes_alvo) é considerado.
     logger.info("Pré-computando climatologia histórica de focos por município e mês de calendário...")
+    ano_inicio = config.get("periodo", {}).get("ano_inicio", 2019)
+    ano_fim = config.get("periodo", {}).get("ano_fim", 2025)
+    data_fim = config.get("periodo", {}).get("data_fim", "2025-12-31")
+    ultimo_mes = data_fim[:7]
+    particao = config.get("particao", {
+        "aquecimento": ["2019-01", "2019-12"],
+        "treino": ["2020-01", "2023-11"],
+        "teste": ["2023-12", "2025-11"]
+    })
+
     hist_fire = df_base[["cd_mun", "ano", "mes_num", "focos_count"]].copy()
     hist_dict = {}
     for (c, m_num), group in hist_fire.groupby(["cd_mun", "mes_num"]):
         group = group.sort_values("ano")
         anos = group["ano"].values
         counts = group["focos_count"].values
-        for target_year in range(2019, 2026):
+        for target_year in range(ano_inicio, ano_fim + 1):
             mask = anos < target_year
             if mask.any():
                 hist_dict[(c, m_num, target_year)] = float(np.mean(counts[mask]))
             else:
                 hist_dict[(c, m_num, target_year)] = np.nan
 
-    logger.info("Filtrando e estruturando a grade de modelagem (83 meses: 2019-01 a 2025-11)...")
-    # Descartar t = 2025-12 pois não tem alvo em 2026-01
-    df_mod = df_base[df_base["mes"] != "2025-12"].copy()
+    logger.info(f"Filtrando e estruturando a grade de modelagem (descartando {ultimo_mes})...")
+    # Descartar último mês pois não tem alvo no mês seguinte
+    df_mod = df_base[df_base["mes"] != ultimo_mes].copy()
     df_mod = df_mod.rename(columns={"mes": "mes_emissao"})
     df_mod["mes_alvo"] = df_mod["mes_emissao"].apply(get_next_month)
 
@@ -138,7 +150,8 @@ def construir_tabela_modelagem(processed_dir: Path) -> pd.DataFrame:
     df_mod["y"] = df_mod["y"].astype(int)
 
     # Conjunto cronológico
-    df_mod["conjunto"] = df_mod["mes_emissao"].apply(classificar_conjunto)
+    df_mod["conjunto"] = df_mod["mes_emissao"].apply(lambda m: classificar_conjunto(m, particao))
+
 
     # 1. Atributos de Histórico de Focos
     logger.info("Calculando atributos de histórico de focos e densidades espaciais...")
@@ -233,10 +246,10 @@ def construir_tabela_modelagem(processed_dir: Path) -> pd.DataFrame:
     df_final = df_mod[colunas_finais].sort_values(["mes_emissao", "cd_mun"]).reset_index(drop=True)
     return df_final
 
-def validar_tabela_modelagem(df: pd.DataFrame, processed_dir: Path):
+def validar_tabela_modelagem(df: pd.DataFrame, processed_dir: Path, config: dict):
     """
-    Validações estritas da etapa 4:
-    1. Linhas: 144 x 83 = 11.952 (aquecimento=1.728, treino=6.768, teste=3.456);
+    Validações estritas da etapa de modelagem:
+    1. Linhas esperadas conforme particao configurada;
     2. Sem duplicatas de (cd_mun, mes_emissao);
     3. Sem nulos nos atributos de treino e teste (nulos só no aquecimento);
     4. Soma de y no teste igual a 492.267 (414.486 em 2024 + 77.781 em 2025);
@@ -244,20 +257,35 @@ def validar_tabela_modelagem(df: pd.DataFrame, processed_dir: Path):
     """
     logger.info("=== INICIANDO VALIDAÇÕES ESTRITAS DA TABELA DE MODELAGEM ===")
 
+    particao = config.get("particao", {
+        "aquecimento": ["2019-01", "2019-12"],
+        "treino": ["2020-01", "2023-11"],
+        "teste": ["2023-12", "2025-11"]
+    })
+    meses_aquec = pd.date_range(particao["aquecimento"][0], particao["aquecimento"][1], freq="MS")
+    meses_treino = pd.date_range(particao["treino"][0], particao["treino"][1], freq="MS")
+    meses_teste = pd.date_range(particao["teste"][0], particao["teste"][1], freq="MS")
+
+    exp_aquec = 144 * len(meses_aquec)
+    exp_treino = 144 * len(meses_treino)
+    exp_teste = 144 * len(meses_teste)
+    exp_total = exp_aquec + exp_treino + exp_teste
+
     # 1. Contagens de Linhas
     n_linhas = len(df)
-    if n_linhas != 11952:
-        raise ValueError(f"FALHA NA VALIDAÇÃO 1: Esperado 11.952 linhas no total, obtido {n_linhas}.")
+    if n_linhas != exp_total:
+        raise ValueError(f"FALHA NA VALIDAÇÃO 1: Esperado {exp_total} linhas no total, obtido {n_linhas}.")
     
     contagens = df["conjunto"].value_counts().to_dict()
     logger.info(f"Contagem por conjunto: {contagens}")
-    if contagens.get("aquecimento", 0) != 1728:
-        raise ValueError(f"FALHA NA VALIDAÇÃO 1: Aquecimento com {contagens.get('aquecimento')} linhas (esperado 1.728).")
-    if contagens.get("treino", 0) != 6768:
-        raise ValueError(f"FALHA NA VALIDAÇÃO 1: Treino com {contagens.get('treino')} linhas (esperado 6.768).")
-    if contagens.get("teste", 0) != 3456:
-        raise ValueError(f"FALHA NA VALIDAÇÃO 1: Teste com {contagens.get('teste')} linhas (esperado 3.456).")
-    logger.info("Validação 1 aprovada: exatamente 11.952 linhas (aquecimento: 1.728, treino: 6.768, teste: 3.456).")
+    if contagens.get("aquecimento", 0) != exp_aquec:
+        raise ValueError(f"FALHA NA VALIDAÇÃO 1: Aquecimento com {contagens.get('aquecimento')} linhas (esperado {exp_aquec}).")
+    if contagens.get("treino", 0) != exp_treino:
+        raise ValueError(f"FALHA NA VALIDAÇÃO 1: Treino com {contagens.get('treino')} linhas (esperado {exp_treino}).")
+    if contagens.get("teste", 0) != exp_teste:
+        raise ValueError(f"FALHA NA VALIDAÇÃO 1: Teste com {contagens.get('teste')} linhas (esperado {exp_teste}).")
+    logger.info(f"Validação 1 aprovada: exatamente {exp_total} linhas (aquecimento: {exp_aquec}, treino: {exp_treino}, teste: {exp_teste}).")
+
 
     # 2. Duplicatas
     dups = df.duplicated(subset=["cd_mun", "mes_emissao"]).sum()
@@ -432,8 +460,8 @@ def executar_processamento_atributos_alvo():
 
     out_parquet = processed_dir / "aphim_modelagem.parquet"
 
-    df_modelagem = construir_tabela_modelagem(processed_dir)
-    validar_tabela_modelagem(df_modelagem, processed_dir)
+    df_modelagem = construir_tabela_modelagem(processed_dir, config)
+    validar_tabela_modelagem(df_modelagem, processed_dir, config)
     gerar_dicionario_dados(df_modelagem, processed_dir)
 
     logger.info(f"Exportando base de modelagem para Parquet: '{out_parquet}'...")

@@ -99,8 +99,10 @@ COLS_C = COLS_A + COLS_ESTRUTURAIS
 COLS_LOG1P_GLM = COLS_HIST_FOCOS
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
 
 # ==============================================================================
 # 1. FUNÇÕES AUXILIARES DE TREINAMENTO E PREDIÇÃO POR MODELO

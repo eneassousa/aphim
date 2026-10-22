@@ -57,8 +57,10 @@ from src.utils.metricas_priorizacao import (
 logger = setup_logger("processamento_03b_atributos_v2")
 
 def carregar_config():
-    with open("config.yaml", "r", encoding="utf-8") as f:
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    with open(config_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
 
 def get_prev_month(mes_str: str, steps: int = 1) -> str:
     """Calcula o mês t-steps no formato AAAA-MM."""
@@ -136,18 +138,23 @@ def construir_atributos_v2(processed_dir: Path) -> pd.DataFrame:
 
     # Climatologia histórica de focos no mês de emissão t (usando estritamente anos anteriores ao ano de t)
     logger.info("Pré-computando climatologia do mês de emissão t com isolamento temporal estrito...")
+    config = carregar_config()
+    ano_inicio = config.get("periodo", {}).get("ano_inicio", 2019)
+    ano_fim = config.get("periodo", {}).get("ano_fim", 2025)
+
     hist_fire = df_base[["cd_mun", "ano", "mes_num", "focos_count"]].copy()
     hist_dict_t = {}
     for (c, m_num), group in hist_fire.groupby(["cd_mun", "mes_num"]):
         group = group.sort_values("ano")
         anos = group["ano"].values
         counts = group["focos_count"].values
-        for target_year in range(2019, 2026):
+        for target_year in range(ano_inicio, ano_fim + 1):
             mask = anos < target_year
             if mask.any():
                 hist_dict_t[(c, m_num, target_year)] = float(np.mean(counts[mask]))
             else:
                 hist_dict_t[(c, m_num, target_year)] = np.nan
+
 
     focos_lookup = df_base.set_index(["cd_mun", "mes"])["focos_count"].to_dict()
     prec_lookup = df_clima.set_index(["cd_mun", "mes"])["prec_mm"].to_dict()
@@ -229,6 +236,33 @@ def construir_atributos_v2(processed_dir: Path) -> pd.DataFrame:
         })
 
     df_novos = pd.DataFrame(novos_registros)
+
+    # 5. Índices Oceânicos (se disponíveis)
+    ocean_path = processed_dir / "indices_oceanicos_mes.parquet"
+    if ocean_path.exists():
+        logger.info("Incorporando atributos de índices oceânicos (Niño 3.4 e TNA)...")
+        df_ocean = pd.read_parquet(ocean_path).sort_values("mes").reset_index(drop=True)
+        nino_dict = df_ocean.set_index("mes")["nino34_anom"].to_dict()
+        tna_dict = df_ocean.set_index("mes")["tna"].to_dict()
+
+        ocean_records = []
+        for _, r in df_mod.iterrows():
+            t = r["mes_emissao"]
+            t1 = get_prev_month(t, 1)
+            t2 = get_prev_month(t, 2)
+            n_t = float(nino_dict[t])
+            n_3m = float(np.mean([nino_dict[t], nino_dict[t1], nino_dict[t2]]))
+            tna_t = float(tna_dict[t])
+            tna_3m = float(np.mean([tna_dict[t], tna_dict[t1], tna_dict[t2]]))
+            ocean_records.append({
+                "nino34_t": n_t,
+                "nino34_3m": n_3m,
+                "tna_t": tna_t,
+                "tna_3m": tna_3m
+            })
+        df_ocean_cols = pd.DataFrame(ocean_records)
+        df_novos = pd.concat([df_novos, df_ocean_cols], axis=1)
+
     df_mod_v2 = pd.concat([df_mod, df_novos], axis=1)
 
     # Validação de Nulos em treino e teste
@@ -236,6 +270,7 @@ def construir_atributos_v2(processed_dir: Path) -> pd.DataFrame:
     df_tt = df_mod_v2[df_mod_v2["conjunto"].isin(["treino", "teste"])]
     nulos = df_tt[cols_novas].isnull().sum()
     if nulos.sum() > 0:
+
         raise ValueError(f"Nulos proibidos encontrados nos novos atributos de treino/teste: {nulos[nulos > 0].to_dict()}")
     logger.info(f"Validação aprovada: zero nulos nos 11 novos atributos em treino e teste.")
 
