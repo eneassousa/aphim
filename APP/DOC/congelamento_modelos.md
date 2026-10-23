@@ -136,3 +136,23 @@ Este documento registra formalmente o congelamento das arquiteturas, conjuntos d
 - Correção de multiplicidade via Holm-Bonferroni (step-down) dentro de cada nível hierárquico.
 - Contagem do número de meses em que a configuração proposta superou cada comparador.
 - Relatório desagregado por sazonalidade (estação chuvosa: jan–jun; estação seca: jul–dez).
+
+---
+
+## 7. Correção da Métrica de Avaliação da Grade (23 de outubro de 2026)
+
+Após a primeira execução do teste em 2026 (commit `5cf72b9`), uma auditoria estrita de cálculo identificou que a métrica de CapturaÁrea@k% e a captura ponta a ponta na grade haviam sido implementadas com duas divergências em relação ao protocolo dos scripts `07_grade_priorizacao.py` e `10_deter_grade.py`:
+
+1. **Cálculo da área agregada nos 15 municípios em vez de por município:**
+   - No script inicial de teste em 2026, as células dos 15 municípios foram reunidas num único pool e os k% de área foram selecionados globalmente. Esse cálculo inflava a métrica porque permitia ao algoritmo alocar desproporcionalmente área nos municípios com maior densidade absoluta de focos.
+   - Pelo protocolo metodológico original, selecionam-se os k% da área de **cada município individualmente**, somam-se os focos capturados nos 15 municípios e divide-se pelo total de focos observados nos 15 municípios.
+2. **Área geométrica da célula:**
+   - Usava-se uma área nominal constante de 25 km² para todas as células.
+   - O protocolo exige o uso de `area_km2_dentro_pa` (extraída de `grade_5000m_celulas.gpkg`), que desconta a área fora dos limites do estado do Pará para células de fronteira (diferença de cerca de 1,07% na área dos 15 municípios).
+
+**Natureza da Correção:**
+- **Zero alteração de modelos:** os modelos congelados (tag `modelos-congelados-2026`), conjuntos de atributos, hiperparâmetros, previsões e municípios priorizados pelo D0 permanecem **100% idênticos** (diferença máxima entre as predições regeradas e anteriores foi exatamente 0.0000000000e+00).
+- Trata-se unicamente do alinhamento do cálculo da métrica de priorização ao protocolo oficial da pesquisa.
+- A correção foi validada contra o benchmark histórico de 2024–2025 (`recorrencia_predicoes_teste_grade.parquet`), reproduzindo exatamente a CapturaÁrea@10% média de **50,68%** registrada em `recorrencia_grade_resumo.csv`.
+- As saídas anteriores com agregação pooled foram arquivadas com o sufixo `_v1_agrupado.csv` para total transparência e reprodutibilidade.
+- Foi adicionada a sinalização de mês parcial para outubro de 2026 (`mes_parcial = True`), uma vez que os focos foram coletados até 23/10, reportando-se as métricas para a totalidade dos 10 meses e para os 9 meses consolidados (sem outubro).

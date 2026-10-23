@@ -175,16 +175,41 @@ def treinar_modelo_xgb(params: Dict[str, Any], X_tr: pd.DataFrame, y_tr: np.ndar
         model.fit(X_tr, y_tr)
         return model
 
-def calcular_captura_area(df_mes_cells: pd.DataFrame, col_score: str, k_pct: float) -> float:
-    df_sorted = df_mes_cells.sort_values(by=[col_score, "cell_id"], ascending=[False, True]).reset_index(drop=True)
-    cum_area = df_sorted["area_km2"].cumsum().values
-    tot_area = cum_area[-1]
-    tot_focos = df_sorted["y"].sum()
-    if tot_focos == 0 or tot_area == 0:
-        return 0.0
-    limiar_area = (k_pct / 100.0) * tot_area
-    mask = (cum_area - df_sorted["area_km2"].values) < limiar_area
-    return float(df_sorted.loc[mask, "y"].sum() / tot_focos)
+def calcular_captura_area_mes(
+    df_mes: pd.DataFrame,
+    col_score: str,
+    top15_muns: List[str],
+    pct_area_k: float = 10.0
+) -> Tuple[float, float, float]:
+    """Calcula a CapturaÁrea@k% para um único mês dentro dos 15 municípios conforme o protocolo original.
+    
+    Retorna:
+        cap: proporção de focos capturados nos k% de cada município / total de focos nos 15 municípios
+        focos_capturados: total absoluto de focos capturados nos 15 municípios
+        area_coberta: área total selecionada (km²)
+    """
+    sub_top15 = df_mes[df_mes["cd_mun"].isin(top15_muns)]
+    focos_capturados = 0.0
+    focos_top15 = 0.0
+    area_coberta = 0.0
+
+    for _, grp in sub_top15.groupby("cd_mun"):
+        f_mun = grp["y"].sum()
+        focos_top15 += f_mun
+
+        grp_sort = grp.sort_values(by=[col_score, "cell_id"], ascending=[False, True])
+        cell_areas = grp_sort["area_km2"].values
+        cum_areas = np.cumsum(cell_areas)
+        total_mun_area = cum_areas[-1] if len(cum_areas) > 0 else 0.0
+        target_area = (pct_area_k / 100.0) * total_mun_area
+
+        mask = (cum_areas - cell_areas) < target_area
+        sel = grp_sort.iloc[mask]
+        focos_capturados += sel["y"].sum()
+        area_coberta += sel["area_km2"].sum()
+
+    cap = (focos_capturados / focos_top15) if focos_top15 > 0 else 0.0
+    return float(cap), float(focos_capturados), float(area_coberta)
 
 def gerar_mapa_municipio(
     cd_mun: str,
@@ -314,7 +339,8 @@ def main():
     ]
     df_grade_full = df_grade.merge(df_deter[["cell_id", "mes_emissao"] + cols_det], on=["cell_id", "mes_emissao"])
     df_grade_full = df_grade_full.merge(df_recorr[["cell_id", "mes_emissao"] + cols_rec], on=["cell_id", "mes_emissao"])
-    df_grade_full["area_km2"] = 25.0
+    cell_area_map = dict(zip(gdf_cells["cell_id"].astype(np.int32), gdf_cells["area_km2_dentro_pa"].astype(float)))
+    df_grade_full["area_km2"] = df_grade_full["cell_id"].map(cell_area_map)
 
     # Meses avaliados em 2026
     meses_emissao_2026 = sorted(df_mun[df_mun["conjunto"] == "teste_2026"]["mes_emissao"].unique())
@@ -356,6 +382,7 @@ def main():
     res_mensal_grade_list = []
     predicoes_mun_t25 = None
     predicoes_grade_t25 = None
+    predicoes_grade_t23 = None
 
     for regime_nome, reg_info in regimes.items():
         logger.info(f"\n=================== EXECUTANDO REGIME {regime_nome} ===================")
@@ -395,16 +422,32 @@ def main():
 
             is_seca = int(m_alvo[5:7]) >= 7
             is_nrt = m_alvo >= "2026-07"
+            mes_parcial = (m_alvo == "2026-10")
             res_mensal_mun_list.append({
                 "regime": regime_nome,
                 "mes_alvo": m_alvo,
                 "estacao": "seca" if is_seca else "chuva",
                 "is_nrt": is_nrt,
+                "mes_parcial": mes_parcial,
                 "cap15_d0": met_d0["captura_15"],
                 "cap15_clima": met_cli["captura_15"],
                 "cap15_persistencia": met_pers["captura_15"],
                 "cap15_hist_fixo": met_hist["captura_15"]
             })
+
+        # Comparação de áreas para 2026-01 na primeira iteração (T25)
+        if regime_nome == "T25":
+            top15_01 = top15_muns_por_mes["2026-01"]
+            cells_top15_01 = gdf_cells[gdf_cells["cd_mun"].isin(top15_01)]
+            soma_dentro_pa = cells_top15_01["area_km2_dentro_pa"].sum()
+            soma_25km = len(cells_top15_01) * 25.0
+            logger.info("\n=== COMPARAÇÃO DE ÁREAS DOS 15 MUNICÍPIOS DO TOPO (2026-01) ===")
+            logger.info(f"Municípios Top 15 D0: {top15_01}")
+            logger.info(f"Total de células: {len(cells_top15_01):,}")
+            logger.info(f"Soma com area_km2_dentro_pa: {soma_dentro_pa:,.2f} km²")
+            logger.info(f"Soma com área cheia (25 km²): {soma_25km:,.2f} km²")
+            logger.info(f"Diferença absoluta: {soma_25km - soma_dentro_pa:,.2f} km² ({(soma_25km - soma_dentro_pa)/soma_dentro_pa*100:.2f}%)")
+            logger.info("===============================================================\n")
 
         # 2. Treinar Nível 2: G0, G1, G2
         feats_g2 = FEATURES_G1 + FEATURES_RECORR_BASE + [col_taxa]
@@ -434,42 +477,40 @@ def main():
 
         if regime_nome == "T25":
             predicoes_grade_t25 = df_eval_grade.copy()
+        elif regime_nome == "T23":
+            predicoes_grade_t23 = df_eval_grade.copy()
 
-        # Avaliar métricas no Top 15 municípios do D0
+        # Avaliar métricas no Top 15 municípios do D0 (separadamente por município)
         for m_alvo in meses_alvo_2026:
             top_muns = top15_muns_por_mes[m_alvo]
-            total_focos_pa = df_eval_grade[df_eval_grade["mes_alvo"] == m_alvo]["y"].sum()
+            sub_m_grade = df_eval_grade[df_eval_grade["mes_alvo"] == m_alvo]
+            total_focos_pa = float(sub_m_grade["y"].sum())
+            sub_top15_cells = sub_m_grade[sub_m_grade["cd_mun"].isin(top_muns)]
+            focos_top15 = float(sub_top15_cells["y"].sum())
 
-            # Restrito aos 15 municípios do topo
-            sub_cells = df_eval_grade[(df_eval_grade["mes_alvo"] == m_alvo) & (df_eval_grade["cd_mun"].isin(top_muns))].copy()
-            focos_top15 = sub_cells["y"].sum()
+            cap_area_5_g2, _, _ = calcular_captura_area_mes(sub_m_grade, "pred_g2", top_muns, pct_area_k=5.0)
+            cap_area_10_g2, f_cap10_g2, _ = calcular_captura_area_mes(sub_m_grade, "pred_g2", top_muns, pct_area_k=10.0)
+            cap_area_20_g2, _, _ = calcular_captura_area_mes(sub_m_grade, "pred_g2", top_muns, pct_area_k=20.0)
 
-            cap_area_10_g2 = calcular_captura_area(sub_cells, "pred_g2", 10.0)
-            cap_area_5_g2 = calcular_captura_area(sub_cells, "pred_g2", 5.0)
-            cap_area_20_g2 = calcular_captura_area(sub_cells, "pred_g2", 20.0)
+            cap_area_10_g1, _, _ = calcular_captura_area_mes(sub_m_grade, "pred_g1", top_muns, pct_area_k=10.0)
+            cap_area_10_g0, _, _ = calcular_captura_area_mes(sub_m_grade, "pred_g0", top_muns, pct_area_k=10.0)
+            cap_area_10_hist, _, _ = calcular_captura_area_mes(sub_m_grade, "pred_hist_fixo", top_muns, pct_area_k=10.0)
+            cap_area_10_cli, _, _ = calcular_captura_area_mes(sub_m_grade, "pred_clima", top_muns, pct_area_k=10.0)
+            cap_area_10_pers, _, _ = calcular_captura_area_mes(sub_m_grade, "pred_persistencia", top_muns, pct_area_k=10.0)
+            cap_area_10_ora, _, _ = calcular_captura_area_mes(sub_m_grade, "pred_oraculo", top_muns, pct_area_k=10.0)
 
-            cap_area_10_g1 = calcular_captura_area(sub_cells, "pred_g1", 10.0)
-            cap_area_10_g0 = calcular_captura_area(sub_cells, "pred_g0", 10.0)
-            cap_area_10_hist = calcular_captura_area(sub_cells, "pred_hist_fixo", 10.0)
-            cap_area_10_cli = calcular_captura_area(sub_cells, "pred_clima", 10.0)
-            cap_area_10_pers = calcular_captura_area(sub_cells, "pred_persistencia", 10.0)
-            cap_area_10_ora = calcular_captura_area(sub_cells, "pred_oraculo", 10.0)
-
-            # Ponta a ponta: focos capturados no top 10% dividido pelo total do Pará
-            df_s = sub_cells.sort_values(by=["pred_g2", "cell_id"], ascending=[False, True]).reset_index(drop=True)
-            c_area = df_s["area_km2"].cumsum().values
-            lim = 0.10 * c_area[-1]
-            m_top = (c_area - df_s["area_km2"].values) < lim
-            focos_cap_g2_tot = df_s.loc[m_top, "y"].sum()
-            ponta_a_ponta_g2 = (focos_cap_g2_tot / total_focos_pa) if total_focos_pa > 0 else 0.0
+            # Ponta a ponta: focos capturados nos 10% de cada município divididos pelo total do Pará
+            ponta_a_ponta_g2 = (f_cap10_g2 / total_focos_pa) if total_focos_pa > 0 else 0.0
 
             is_seca = int(m_alvo[5:7]) >= 7
             is_nrt = m_alvo >= "2026-07"
+            mes_parcial = (m_alvo == "2026-10")
             res_mensal_grade_list.append({
                 "regime": regime_nome,
                 "mes_alvo": m_alvo,
                 "estacao": "seca" if is_seca else "chuva",
                 "is_nrt": is_nrt,
+                "mes_parcial": mes_parcial,
                 "total_focos_pa": total_focos_pa,
                 "focos_top15_muns": focos_top15,
                 "cap_area_5_g2": cap_area_5_g2,
@@ -494,43 +535,52 @@ def main():
     df_res_grade_mensal.to_csv(res_dir / "teste2026_grade_mensal.csv", index=False)
     logger.info("teste2026_municipio_mensal.csv e teste2026_grade_mensal.csv salvos.")
 
+    # Filtros de período para resumos (com e sem outubro parcial)
+    filtros_periodo = [
+        ("todos_10_meses", lambda df: df),
+        ("sem_outubro_9_meses", lambda df: df[df["mes_alvo"] != "2026-10"])
+    ]
+
     # Resumos Estatísticos: Nível 1
     resumo_mun_rows = []
     comparadores_mun = [("climatologia", "cap15_clima"), ("persistencia", "cap15_persistencia"), ("historico_fixo", "cap15_hist_fixo")]
 
     for reg in ["T25", "T23"]:
-        sub_m = df_res_mun_mensal[df_res_mun_mensal["regime"] == reg]
-        n_meses = len(sub_m)
-        c_d0 = sub_m["cap15_d0"].values
-        p_vals = []
-        rows_temp = []
+        sub_reg = df_res_mun_mensal[df_res_mun_mensal["regime"] == reg]
+        for nome_filtro, func_f in filtros_periodo:
+            sub_m = func_f(sub_reg)
+            n_meses = len(sub_m)
+            c_d0 = sub_m["cap15_d0"].values
+            p_vals = []
+            rows_temp = []
 
-        for comp_nome, col_comp in comparadores_mun:
-            c_comp = sub_m[col_comp].values
-            diff = c_d0 - c_comp
-            diff_med = float(np.mean(diff))
-            ic_inf, ic_sup = bootstrap_ci_diff(diff)
-            w_stat, p_val = wilcoxon(diff, alternative="two-sided") if not np.all(diff == 0) else (0.0, 1.0)
-            p_vals.append(p_val)
-            venceu = int(np.sum(diff > 0))
+            for comp_nome, col_comp in comparadores_mun:
+                c_comp = sub_m[col_comp].values
+                diff = c_d0 - c_comp
+                diff_med = float(np.mean(diff))
+                ic_inf, ic_sup = bootstrap_ci_diff(diff)
+                w_stat, p_val = wilcoxon(diff, alternative="two-sided") if not np.all(diff == 0) else (0.0, 1.0)
+                p_vals.append(p_val)
+                venceu = int(np.sum(diff > 0))
 
-            rows_temp.append({
-                "regime": reg,
-                "n_meses": n_meses,
-                "comparador": comp_nome,
-                "cap15_d0": float(np.mean(c_d0)),
-                "cap15_comparador": float(np.mean(c_comp)),
-                "diff_media": diff_med,
-                "ic95_inf": ic_inf,
-                "ic95_sup": ic_sup,
-                "p_wilcoxon": p_val,
-                "meses_venceu": venceu
-            })
+                rows_temp.append({
+                    "regime": reg,
+                    "filtro_meses": nome_filtro,
+                    "n_meses": n_meses,
+                    "comparador": comp_nome,
+                    "cap15_d0": float(np.mean(c_d0)),
+                    "cap15_comparador": float(np.mean(c_comp)),
+                    "diff_media": diff_med,
+                    "ic95_inf": ic_inf,
+                    "ic95_sup": ic_sup,
+                    "p_wilcoxon": p_val,
+                    "meses_venceu": venceu
+                })
 
-        p_adj = holm_bonferroni(np.array(p_vals))
-        for r, pa in zip(rows_temp, p_adj):
-            r["p_holm"] = pa
-            resumo_mun_rows.append(r)
+            p_adj = holm_bonferroni(np.array(p_vals))
+            for r, pa in zip(rows_temp, p_adj):
+                r["p_holm"] = pa
+                resumo_mun_rows.append(r)
 
     df_resumo_mun = pd.DataFrame(resumo_mun_rows)
     df_resumo_mun.to_csv(res_dir / "teste2026_municipio_resumo.csv", index=False)
@@ -547,47 +597,68 @@ def main():
     ]
 
     for reg in ["T25", "T23"]:
-        sub_g = df_res_grade_mensal[df_res_grade_mensal["regime"] == reg]
-        n_meses = len(sub_g)
-        c_g2 = sub_g["cap_area_10_g2"].values
-        p_vals = []
-        rows_temp = []
+        sub_reg = df_res_grade_mensal[df_res_grade_mensal["regime"] == reg]
+        for nome_filtro, func_f in filtros_periodo:
+            sub_g = func_f(sub_reg)
+            n_meses = len(sub_g)
+            c_g2 = sub_g["cap_area_10_g2"].values
+            p_vals = []
+            rows_temp = []
 
-        for comp_nome, col_comp in comparadores_grade:
-            c_comp = sub_g[col_comp].values
-            diff = c_g2 - c_comp
-            diff_med = float(np.mean(diff))
-            ic_inf, ic_sup = bootstrap_ci_diff(diff)
-            w_stat, p_val = wilcoxon(diff, alternative="two-sided") if not np.all(diff == 0) else (0.0, 1.0)
-            p_vals.append(p_val)
-            venceu = int(np.sum(diff > 0))
+            for comp_nome, col_comp in comparadores_grade:
+                c_comp = sub_g[col_comp].values
+                diff = c_g2 - c_comp
+                diff_med = float(np.mean(diff))
+                ic_inf, ic_sup = bootstrap_ci_diff(diff)
+                w_stat, p_val = wilcoxon(diff, alternative="two-sided") if not np.all(diff == 0) else (0.0, 1.0)
+                p_vals.append(p_val)
+                venceu = int(np.sum(diff > 0))
 
-            rows_temp.append({
-                "regime": reg,
-                "n_meses": n_meses,
-                "comparador": comp_nome,
-                "cap_area_10_g2": float(np.mean(c_g2)),
-                "cap_area_10_comparador": float(np.mean(c_comp)),
-                "diff_media": diff_med,
-                "ic95_inf": ic_inf,
-                "ic95_sup": ic_sup,
-                "p_wilcoxon": p_val,
-                "meses_venceu": venceu
-            })
+                rows_temp.append({
+                    "regime": reg,
+                    "filtro_meses": nome_filtro,
+                    "n_meses": n_meses,
+                    "comparador": comp_nome,
+                    "cap_area_10_g2": float(np.mean(c_g2)),
+                    "cap_area_10_comparador": float(np.mean(c_comp)),
+                    "diff_media": diff_med,
+                    "ic95_inf": ic_inf,
+                    "ic95_sup": ic_sup,
+                    "p_wilcoxon": p_val,
+                    "meses_venceu": venceu
+                })
 
-        p_adj = holm_bonferroni(np.array(p_vals))
-        for r, pa in zip(rows_temp, p_adj):
-            r["p_holm"] = pa
-            resumo_grade_rows.append(r)
+            p_adj = holm_bonferroni(np.array(p_vals))
+            for r, pa in zip(rows_temp, p_adj):
+                r["p_holm"] = pa
+                resumo_grade_rows.append(r)
 
     df_resumo_grade = pd.DataFrame(resumo_grade_rows)
     df_resumo_grade.to_csv(res_dir / "teste2026_grade_resumo.csv", index=False)
     logger.info("teste2026_municipio_resumo.csv e teste2026_grade_resumo.csv salvos.")
 
-    # Salvar predições (só T25)
+    # Comparar predições T25 com arquivo anterior (verificação de identidade)
+    p_t25_grade = res_dir / "teste2026_predicoes_grade.parquet"
+    if p_t25_grade.exists():
+        df_old_t25 = pd.read_parquet(p_t25_grade)
+        diff_max_g2 = float(np.max(np.abs(predicoes_grade_t25["pred_g2"].values - df_old_t25["pred_g2"].values)))
+        diff_max_g1 = float(np.max(np.abs(predicoes_grade_t25["pred_g1"].values - df_old_t25["pred_g1"].values)))
+        diff_max_g0 = float(np.max(np.abs(predicoes_grade_t25["pred_g0"].values - df_old_t25["pred_g0"].values)))
+        logger.info("\n=== VERIFICAÇÃO DE IDENTIDADE DAS PREVISÕES T25 ===")
+        logger.info(f"Diferença máxima G2: {diff_max_g2:.10e}")
+        logger.info(f"Diferença máxima G1: {diff_max_g1:.10e}")
+        logger.info(f"Diferença máxima G0: {diff_max_g0:.10e}")
+        logger.info("===================================================\n")
+
+    # Salvar predições
     predicoes_mun_t25.to_parquet(res_dir / "teste2026_predicoes_municipio.parquet", index=False)
-    predicoes_grade_t25.to_parquet(res_dir / "teste2026_predicoes_grade.parquet", index=False)
+    predicoes_grade_t25.to_parquet(p_t25_grade, index=False)
     logger.info("Predições T25 salvas em parquet.")
+
+    if predicoes_grade_t23 is not None:
+        p_t23_grade = res_dir / "teste2026_predicoes_grade_T23.parquet"
+        predicoes_grade_t23.to_parquet(p_t23_grade, index=False)
+        logger.info(f"Predições T23 salvas em '{p_t23_grade}'.")
 
     # Identificar mês com maior total de focos no Pará em 2026
     sub_t25_grade = df_res_grade_mensal[df_res_grade_mensal["regime"] == "T25"]
