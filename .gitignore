@@ -74,3 +74,9 @@ APP/data/processed/grade_*_modelagem.parquet
 **/data/processed/grade_*_modelagem.parquet
 APP/data/processed/grade_2500m_celulas.gpkg
 **/data/processed/grade_2500m_celulas.gpkg
+
+# Tensores e pesos de modelos profundos (ConvLSTM)
+*.npz
+*.pt
+*.pth
+
