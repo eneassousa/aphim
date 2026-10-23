@@ -1,0 +1,3 @@
+configuracao,n_atributos,hiperparametros,cap_area_10_2022,cap_area_10_2023,cap_area_10_media
+G1,21,"{""max_depth"": 4, ""learning_rate"": 0.1, ""n_estimators"": 300, ""min_child_weight"": 1}",0.5108227628183023,0.5336866908669954,0.5222547268426488
+G2,27,"{""max_depth"": 6, ""learning_rate"": 0.05, ""n_estimators"": 600, ""min_child_weight"": 10}",0.5238323213650965,0.5400846949766422,0.5319585081708693
