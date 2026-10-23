@@ -1,0 +1,75 @@
+uf: 15
+uf_sigla: "PA"
+periodo:
+  data_inicio: "2019-01-01"
+  data_fim: "2026-10-23"
+  ano_inicio: 2019
+  ano_fim: 2026
+  mes_fim: 10
+  ano_inicio_historico: 2018
+
+particao:
+  aquecimento: ["2019-01", "2019-12"]
+  treino: ["2020-01", "2023-11"]
+  teste_historico: ["2023-12", "2025-11"]
+  teste_2026: ["2025-12", "2026-09"]
+  dobras_validacao: [2022, 2023]
+
+caminhos:
+  raw: "data/raw_2026"
+  interim: "data/interim_2026"
+  processed: "data/processed_2026"
+  logs: "logs"
+
+firms:
+  fonte_principal: "VIIRS_SNPP_SP"
+  fonte_nrt: "VIIRS_SNPP_NRT"
+  day_range_max: 5
+  bbox: [-59.5, -10.0, -45.5, 3.0]
+  filtros:
+    descartar_confidence_low: true
+    filtrar_tipo_vegetacao: true
+
+projecao_area: 5880 # EPSG:5880 (SIRGAS 2000 / Brazil Polyconic)
+
+grade:
+  tamanho_m: 5000
+
+era5:
+  asset: "ECMWF/ERA5_LAND/MONTHLY_AGGR"
+  catalog_url: "https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_LAND_MONTHLY_AGGR"
+  scale: 1000
+  periodo_principal:
+    ano_inicio: 2018
+    ano_fim: 2026
+    mes_fim: 9
+  periodo_normal:
+    ano_inicio: 1991
+    ano_fim: 2020
+
+deter:
+  wfs_url: "https://terrabrasilis.dpi.inpe.br/geoserver/deter-amz/ows"
+  layer_name: "deter-amz:deter_amz"
+  ano_inicio: 2018
+  ano_fim: 2026
+
+multicriterio:
+  nivel_1:
+    perigo: 0.5
+    vulnerabilidade: 0.5
+  nivel_2_saaty:
+    criterios:
+      - "desmat_pct_area_prodes"
+      - "pct_floresta"
+      - "renda_pc"
+    matriz:
+      - [1.0, 2.0, 2.0]
+      - [0.5, 1.0, 1.0]
+      - [0.5, 1.0, 1.0]
+  electre:
+    quantis_perfis: [0.50, 0.75, 0.90]
+    classes: ["Baixo", "Moderado", "Alto", "Critico"]
+    limiar_q_percentil: 0.02
+    limiar_p_percentil: 0.05
+    corte_lambda: 0.75
+    atribuicao: "pessimista"

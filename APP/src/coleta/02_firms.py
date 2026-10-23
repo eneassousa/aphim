@@ -192,9 +192,9 @@ def processar_firms():
     df_filt = gdf_joined.copy()
     total_antes_tipo = len(df_filt)
     if "type" in df_filt.columns:
-        df_filt = df_filt[df_filt["type"] == 0]
+        df_filt = df_filt[df_filt["type"].isna() | (df_filt["type"] == 0)]
         descarte_tipo = total_antes_tipo - len(df_filt)
-        logger.info(f"Filtro 2 (type == 0): Mantidos {len(df_filt):,} focos (Descartados {descarte_tipo:,}).")
+        logger.info(f"Filtro 2 (type == 0 ou NRT): Mantidos {len(df_filt):,} focos (Descartados {descarte_tipo:,}).")
 
     # Filtro 3: descartar confidence == 'l' ou 'low'
     total_antes_conf = len(df_filt)

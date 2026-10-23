@@ -33,7 +33,8 @@ from src.utils.logger import setup_logger
 logger = setup_logger("processamento_06_grade_base")
 
 def carregar_config() -> dict:
-    config_path = Path(__file__).resolve().parents[2] / "config.yaml"
+    config_file = os.getenv("APHIM_CONFIG", "config.yaml")
+    config_path = Path(__file__).resolve().parents[2] / config_file if not Path(config_file).is_absolute() else Path(config_file)
     if not config_path.exists():
         raise FileNotFoundError(f"Arquivo de configuração '{config_path}' não encontrado.")
     with open(config_path, "r", encoding="utf-8") as f:
@@ -52,6 +53,8 @@ def classificar_conjunto(mes_emissao: str) -> str:
         return "treino"
     elif "2023-12" <= mes_emissao <= "2025-11":
         return "teste"
+    elif mes_emissao >= "2025-12":
+        return "teste_2026"
     raise ValueError(f"Mês de emissão {mes_emissao} fora do escopo de modelagem.")
 
 def construir_grade_celulas(gdf_mun: gpd.GeoDataFrame, tamanho_m: float) -> Tuple[gpd.GeoDataFrame, Dict[Tuple[int, int], int], sp.csr_matrix]:

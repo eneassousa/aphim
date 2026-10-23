@@ -1,0 +1,5 @@
+fonte,produto,ultimo_registro,cobertura_2026,status_2026
+NASA FIRMS VIIRS S-NPP SP,VIIRS_SNPP_SP (Standard Processing),2026-06-30,2026-01 a 2026-06,Disponível (SP)
+NASA FIRMS VIIRS S-NPP NRT,VIIRS_SNPP_NRT (Near Real-Time),2026-10-23,2026-07 a 2026-10,Disponível (NRT)
+ERA5-Land Mensal (ECMWF / GEE),ECMWF/ERA5_LAND/MONTHLY_AGGR,2026-09,2026-01 a 2026-09,Disponível (Consolidado)
+INPE TerraBrasilis DETER Amazônia,deter-amz:deter_amz (WFS),2026-10-16,2026-01 a 2026-10,Disponível (Alertas)
